@@ -30,6 +30,9 @@
         "access": "public"
     },
     "devDependencies": {
+        "@noir-lang/aztec_backend": "^0.12.0",
+        "@noir-lang/barretenberg": "^2.19.0",
+        "@noir-lang/noir_wasm": "^0.4.1-3d2233d",
         "@rollup/plugin-commonjs": "^24.0.1",
         "@rollup/plugin-node-resolve": "^15.0.1",
         "poseidon-lite": "^0.1.0",

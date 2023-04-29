@@ -1,7 +1,23 @@
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-ignore
+import { BarretenbergWasm, SinglePedersen } from '@noir-lang/barretenberg';
 import { BigNumber } from "@ethersproject/bignumber"
 import { randomBytes } from "@ethersproject/random"
-import { poseidon1 } from "poseidon-lite/poseidon1"
-import { poseidon2 } from "poseidon-lite/poseidon2"
+import { serialise_public_inputs } from '@noir-lang/aztec_backend';
+
+
+/**
+ * Serialise inputs to hash function.
+ * @param values Input values.
+ * @returns Buffer.
+ */
+export function serialiseInputs(values: bigint[]) {
+    return values.map(v => {
+      const hex = v.toString(16);
+      const paddedHex = hex.length % 2 === 0 ? '0x' + hex : '0x0' + hex;
+      return Buffer.from(serialise_public_inputs([paddedHex]));
+    });
+}
 
 /**
  * Generates a random big number.
@@ -18,8 +34,10 @@ export function genRandomNumber(numberOfBytes = 31): bigint {
  * @param trapdoor The identity trapdoor.
  * @returns identity commitment
  */
-export function generateCommitment(nullifier: bigint, trapdoor: bigint): bigint {
-    return poseidon1([poseidon2([nullifier, trapdoor])])
+export function generateCommitment(wasm: BarretenbergWasm, nullifier: bigint, trapdoor: bigint): bigint {
+    const pedersen = new SinglePedersen(wasm)
+    const secret = pedersen.compressInputs(serialiseInputs([nullifier, trapdoor]))
+    return BigInt(`0x${pedersen.compressInputs([secret]).toString('hex')}`)
 }
 
 /**

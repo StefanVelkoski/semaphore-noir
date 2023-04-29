@@ -1,10 +1,15 @@
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-ignore
+import { BarretenbergWasm } from '@noir-lang/barretenberg';
 import { IncrementalMerkleTree, MerkleProof } from "@zk-kit/incremental-merkle-tree"
-import { poseidon2 } from "poseidon-lite/poseidon2"
 import hash from "./hash"
-import { BigNumberish } from "./types"
+import { BigNumberish, Node, HashFunction } from "./types/index"
+
+
 
 export default class Group {
     private _id: BigNumberish
+    private _wasm: BarretenbergWasm
 
     merkleTree: IncrementalMerkleTree
 
@@ -13,13 +18,21 @@ export default class Group {
      * @param id Group identifier.
      * @param treeDepth Tree depth.
      */
-    constructor(id: BigNumberish, treeDepth = 20) {
+    constructor(wasm: BarretenbergWasm, id: BigNumberish, treeDepth = 20) {
         if (treeDepth < 16 || treeDepth > 32) {
             throw new Error("The tree depth must be between 16 and 32")
         }
 
+        this._wasm = wasm
         this._id = id
-        this.merkleTree = new IncrementalMerkleTree(poseidon2, treeDepth, hash(id), 2)
+
+        const pedersen = this.pedersenFactory()
+        this.merkleTree = new IncrementalMerkleTree(pedersen, treeDepth, hash(this._wasm, id.toString()), 2)
+    }
+
+    
+    private pedersenFactory(): HashFunction {
+      return (preimage: Node[]): Node => hash(this._wasm, preimage.toString())
     }
 
     /**
@@ -38,7 +51,7 @@ export default class Group {
         return this.merkleTree.root
     }
 
-    /**
+    /**am   t   
      * Returns the depth of the tree.
      * @returns Tree depth.
      */
