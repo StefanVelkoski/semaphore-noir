@@ -1,20 +1,37 @@
-import { SemaphoreSubgraph } from "@semaphore-protocol/data"
+import { GroupResponse, SemaphoreEthers, SemaphoreSubgraph } from "@semaphore-protocol/data"
 import chalk from "chalk"
 import { program } from "commander"
-import download from "download"
 import figlet from "figlet"
-import { existsSync, readFileSync, renameSync } from "fs"
-import inquirer from "inquirer"
+import { existsSync, readFileSync, unlinkSync, copyFileSync } from "fs"
 import logSymbols from "log-symbols"
+import pacote from "pacote"
+import decompress from "decompress"
 import { dirname } from "path"
 import { fileURLToPath } from "url"
 import checkLatestVersion from "./checkLatestVersion.js"
+import getGroupIds from "./getGroupIds.js"
+import { getGroupId, getProjectName, getSupportedNetwork, getSupportedTemplate } from "./inquirerPrompts.js"
 import Spinner from "./spinner.js"
 
 const packagePath = `${dirname(fileURLToPath(import.meta.url))}/..`
 const { description, version } = JSON.parse(readFileSync(`${packagePath}/package.json`, "utf8"))
 
-const supportedNetworks = ["goerli", "mumbai", "optimism-goerli", "arbitrum"]
+const supportedNetworks = ["sepolia", "goerli", "mumbai", "optimism-goerli", "arbitrum", "arbitrum-goerli"]
+
+const supportedTemplates = [
+    {
+        value: "monorepo-ethers",
+        name: "Hardhat + Next.js + SemaphoreEthers"
+    },
+    {
+        value: "monorepo-subgraph",
+        name: "Hardhat + Next.js + SemaphoreSubgraph"
+    },
+    {
+        value: "contracts-hardhat",
+        name: "Hardhat"
+    }
+]
 
 program
     .name("semaphore")
@@ -34,22 +51,24 @@ program
     .command("create")
     .description("Create a Semaphore project with a supported template.")
     .argument("[project-directory]", "Directory of the project.")
-    // .option("-t, --template <template-name>", "Supported Semaphore template.", "hardhat")
+    .option("-t, --template <template-name>", "Supported Semaphore template.")
     .allowExcessArguments(false)
-    .action(async (projectDirectory) => {
+    .action(async (projectDirectory, { template }) => {
         if (!projectDirectory) {
-            const { projectName } = await inquirer.prompt({
-                name: "projectName",
-                type: "input",
-                message: "What is your project name?",
-                default: "my-app"
-            })
-            projectDirectory = projectName
+            projectDirectory = await getProjectName()
+        }
+
+        if (!template) {
+            template = await getSupportedTemplate(supportedTemplates)
+        }
+
+        if (!supportedTemplates.some((t) => t.value === template)) {
+            console.info(`\n ${logSymbols.error}`, `error: the template '${template}' is not supported\n`)
+            return
         }
 
         const currentDirectory = process.cwd()
         const spinner = new Spinner(`Creating your project in ${chalk.green(`./${projectDirectory}`)}`)
-        const templateURL = `https://registry.npmjs.org/@semaphore-protocol/cli-template-hardhat/-/cli-template-hardhat-${version}.tgz`
 
         if (existsSync(projectDirectory)) {
             console.info(`\n ${logSymbols.error}`, `error: the '${projectDirectory}' folder already exists\n`)
@@ -60,9 +79,19 @@ program
 
         await checkLatestVersion(version)
 
-        await download(templateURL, currentDirectory, { extract: true })
+        await pacote.extract(
+            `@semaphore-protocol/cli-template-${template}@${version}`,
+            `${currentDirectory}/${projectDirectory}`
+        )
 
-        renameSync(`${currentDirectory}/package`, `${currentDirectory}/${projectDirectory}`)
+        await decompress(`${currentDirectory}/${projectDirectory}/files.tgz`, `${currentDirectory}/${projectDirectory}`)
+
+        unlinkSync(`${currentDirectory}/${projectDirectory}/files.tgz`)
+
+        copyFileSync(
+            `${currentDirectory}/${projectDirectory}/.env.example`,
+            `${currentDirectory}/${projectDirectory}/.env`
+        )
 
         spinner.stop()
 
@@ -88,19 +117,12 @@ program
 
 program
     .command("get-groups")
-    .description("Get the list of groups from a supported network (goerli or arbitrum).")
+    .description("Get the list of groups from a supported network (e.g. goerli or arbitrum).")
     .option("-n, --network <network-name>", "Supported Ethereum network.")
     .allowExcessArguments(false)
     .action(async ({ network }) => {
         if (!network) {
-            const { selectedNetwork } = await inquirer.prompt({
-                name: "selectedNetwork",
-                type: "list",
-                message: "Select one of our supported networks:",
-                default: supportedNetworks[0],
-                choices: supportedNetworks
-            })
-            network = selectedNetwork
+            network = await getSupportedNetwork(supportedNetworks)
         }
 
         if (!supportedNetworks.includes(network)) {
@@ -108,99 +130,26 @@ program
             return
         }
 
-        const subgraph = new SemaphoreSubgraph(network)
-        const spinner = new Spinner("Fetching groups")
+        const groupIds = await getGroupIds(network)
 
-        spinner.start()
+        if (groupIds === null) return
 
-        try {
-            const groupIds = await subgraph.getGroupIds()
+        const content = `${chalk.bold("Groups")} (${groupIds.length}): \n${groupIds
+            .map((id: any) => ` - ${id}`)
+            .join("\n")}`
 
-            spinner.stop()
-
-            if (groupIds.length === 0) {
-                console.info(`\n ${logSymbols.info}`, "info: there are no groups in this network\n")
-                return
-            }
-
-            const content = `\n${groupIds.map((id: any) => ` - ${id}`).join("\n")}`
-
-            console.info(`${content}\n`)
-        } catch (error) {
-            spinner.stop()
-
-            console.info(`\n ${logSymbols.error}`, "error: unexpected error with the Semaphore subgraph")
-        }
+        console.info(`\n${content}\n`)
     })
 
 program
     .command("get-group")
-    .description("Get the data of a group from a supported network (Goerli or Arbitrum).")
+    .description("Get the data of a group from a supported network (e.g. goerli or arbitrum).")
     .argument("[group-id]", "Identifier of the group.")
     .option("-n, --network <network-name>", "Supported Ethereum network.")
-    .option("-m, --members", "Show group members.")
-    .option("-s, --signals", "Show group signals.")
     .allowExcessArguments(false)
-    .action(async (groupId, { network, members, signals }) => {
+    .action(async (groupId, { network }) => {
         if (!network) {
-            const { selectedNetwork } = await inquirer.prompt({
-                name: "selectedNetwork",
-                type: "list",
-                message: "Select one of our supported networks:",
-                default: supportedNetworks[0],
-                choices: supportedNetworks
-            })
-            network = selectedNetwork
-        }
-
-        if (!groupId) {
-            const subgraphGroups = new SemaphoreSubgraph(network)
-            const spinnerGroups = new Spinner("Fetching groups")
-            spinnerGroups.start()
-            try {
-                const groups = await subgraphGroups.getGroups()
-
-                spinnerGroups.stop()
-
-                if (groups.length === 0) {
-                    console.info(`\n ${logSymbols.info}`, "info: there are no groups in this network\n")
-                    return
-                }
-
-                const groupIds = groups.map(({ id }: any) => id)
-
-                const { selectedGroupId } = await inquirer.prompt({
-                    name: "selectedGroupId",
-                    type: "list",
-                    message: "Select one of the following existing group ids:",
-                    choices: groupIds
-                })
-                groupId = selectedGroupId
-            } catch (error) {
-                spinnerGroups.stop()
-                console.info(`\n ${logSymbols.error}`, "error: unexpected error with the Semaphore subgraph")
-                return
-            }
-        }
-
-        if (!members && !signals) {
-            const { showMembers } = await inquirer.prompt({
-                name: "showMembers",
-                type: "confirm",
-                message: "Do you want to show members?",
-                default: false
-            })
-
-            members = showMembers
-
-            const { showSignals } = await inquirer.prompt({
-                name: "showSignals",
-                type: "confirm",
-                message: "Do you want to show signals?",
-                default: false
-            })
-
-            signals = showSignals
+            network = await getSupportedNetwork(supportedNetworks)
         }
 
         if (!supportedNetworks.includes(network)) {
@@ -208,48 +157,180 @@ program
             return
         }
 
-        const subgraph = new SemaphoreSubgraph(network)
+        if (!groupId) {
+            const groupIds = await getGroupIds(network)
+
+            if (groupIds === null) return
+
+            groupId = await getGroupId(groupIds)
+        }
+
+        let group: GroupResponse
+
         const spinner = new Spinner(`Fetching group ${groupId}`)
 
         spinner.start()
 
         try {
-            const group = await subgraph.getGroup(groupId, { members, verifiedProofs: signals })
+            const semaphoreSubgraph = new SemaphoreSubgraph(network)
+
+            group = await semaphoreSubgraph.getGroup(groupId)
 
             spinner.stop()
+        } catch {
+            try {
+                const semaphoreEthers = new SemaphoreEthers(network)
 
-            if (!group) {
+                group = await semaphoreEthers.getGroup(groupId)
+
+                group.admin = await semaphoreEthers.getGroupAdmin(groupId)
+
+                spinner.stop()
+            } catch {
+                spinner.stop()
                 console.info(`\n ${logSymbols.error}`, "error: the group does not exist\n")
-
                 return
             }
-
-            let content = ` ${chalk.bold("Id")}: ${group.id}\n`
-            content += ` ${chalk.bold("Admin")}: ${group.admin}\n`
-            content += ` ${chalk.bold("Merkle tree")}:\n`
-            content += `   Root: ${group.merkleTree.root}\n`
-            content += `   Depth: ${group.merkleTree.depth}\n`
-            content += `   Zero value: ${group.merkleTree.zeroValue}\n`
-            content += `   Number of leaves: ${group.merkleTree.numberOfLeaves}`
-
-            if (members) {
-                content += `\n\n ${chalk.bold("Members")}: \n${group.members
-                    .map((member: string, i: number) => `   ${i}. ${member}`)
-                    .join("\n")}`
-            }
-
-            if (signals) {
-                content += `\n\n ${chalk.bold("Signals")}: \n${group.verifiedProofs
-                    .map(({ signal }: any) => `   - ${signal}`)
-                    .join("\n")}`
-            }
-
-            console.info(`\n${content}\n`)
-        } catch (error) {
-            spinner.stop()
-
-            console.info(`\n ${logSymbols.error}`, "error: unexpected error with the Semaphore subgraph")
         }
+
+        let content = ` ${chalk.bold("Id")}: ${group.id}\n`
+        content += ` ${chalk.bold("Admin")}: ${group.admin}\n`
+        content += ` ${chalk.bold("Merkle tree")}:\n`
+        content += `   Root: ${group.merkleTree.root}\n`
+        content += `   Depth: ${group.merkleTree.depth}\n`
+        content += `   Zero value: ${group.merkleTree.zeroValue}\n`
+        content += `   Number of leaves: ${group.merkleTree.numberOfLeaves}`
+
+        console.info(`\n${content}\n`)
+    })
+
+program
+    .command("get-members")
+    .description("Get the members of a group from a supported network (e.g. goerli or arbitrum).")
+    .argument("[group-id]", "Identifier of the group.")
+    .option("-n, --network <network-name>", "Supported Ethereum network.")
+    .allowExcessArguments(false)
+    .action(async (groupId, { network }) => {
+        if (!network) {
+            network = await getSupportedNetwork(supportedNetworks)
+        }
+
+        if (!supportedNetworks.includes(network)) {
+            console.info(`\n ${logSymbols.error}`, `error: the network '${network}' is not supported\n`)
+            return
+        }
+
+        if (!groupId) {
+            const groupIds = await getGroupIds(network)
+
+            if (groupIds === null) return
+
+            groupId = await getGroupId(groupIds)
+        }
+
+        let groupMembers: string[]
+
+        const spinner = new Spinner(`Fetching members of group ${groupId}`)
+
+        spinner.start()
+
+        try {
+            const semaphoreSubgraph = new SemaphoreSubgraph(network)
+
+            const group = await semaphoreSubgraph.getGroup(groupId, { members: true })
+            groupMembers = group.members
+
+            spinner.stop()
+        } catch {
+            try {
+                const semaphoreEthers = new SemaphoreEthers(network)
+
+                groupMembers = await semaphoreEthers.getGroupMembers(groupId)
+
+                spinner.stop()
+            } catch {
+                spinner.stop()
+                console.info(`\n ${logSymbols.error}`, "error: the group does not exist\n")
+                return
+            }
+        }
+
+        if (groupMembers.length === 0) {
+            console.info(`\n ${logSymbols.info}`, "info: there are no members in this group\n")
+            return
+        }
+
+        const content = `${chalk.bold("Members")} (${groupMembers.length}): \n${groupMembers
+            .map((member: string, i: number) => `   ${i}. ${member}`)
+            .join("\n")}`
+
+        console.info(`\n${content}\n`)
+    })
+
+program
+    .command("get-proofs")
+    .description("Get the proofs from a supported network (e.g. goerli or arbitrum).")
+    .argument("[group-id]", "Identifier of the group.")
+    .option("-n, --network <network-name>", "Supported Ethereum network.")
+    .allowExcessArguments(false)
+    .action(async (groupId, { network }) => {
+        if (!network) {
+            network = await getSupportedNetwork(supportedNetworks)
+        }
+
+        if (!supportedNetworks.includes(network)) {
+            console.info(`\n ${logSymbols.error}`, `error: the network '${network}' is not supported\n`)
+            return
+        }
+
+        if (!groupId) {
+            const groupIds = await getGroupIds(network)
+
+            if (groupIds === null) return
+
+            groupId = await getGroupId(groupIds)
+        }
+
+        let verifiedProofs: any[]
+
+        const spinner = new Spinner(`Fetching proofs of group ${groupId}`)
+
+        spinner.start()
+
+        try {
+            const semaphoreSubgraph = new SemaphoreSubgraph(network)
+
+            const group = await semaphoreSubgraph.getGroup(groupId, { verifiedProofs: true })
+            verifiedProofs = group.verifiedProofs
+
+            spinner.stop()
+        } catch {
+            try {
+                const semaphoreEthers = new SemaphoreEthers(network)
+
+                verifiedProofs = await semaphoreEthers.getGroupVerifiedProofs(groupId)
+
+                spinner.stop()
+            } catch {
+                spinner.stop()
+                console.info(`\n ${logSymbols.error}`, "error: the group does not exist\n")
+                return
+            }
+        }
+
+        if (verifiedProofs.length === 0) {
+            console.info(`\n ${logSymbols.info}`, "info: there are no proofs in this group\n")
+            return
+        }
+
+        const content = `${chalk.bold("Proofs")} (${verifiedProofs.length}): \n${verifiedProofs
+            .map(
+                ({ signal, merkleTreeRoot, externalNullifier, nullifierHash }: any, i: number) =>
+                    `   ${i}. signal: ${signal} \n      merkleTreeRoot: ${merkleTreeRoot} \n      externalNullifier: ${externalNullifier} \n      nullifierHash: ${nullifierHash}`
+            )
+            .join("\n")}`
+
+        console.info(`\n${content}\n`)
     })
 
 program.parse(process.argv)

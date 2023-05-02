@@ -9,6 +9,7 @@ import { generateCommitment, genRandomNumber, isJsonArray } from "./utils"
 export default class Identity {
     private _trapdoor: bigint
     private _nullifier: bigint
+    private _secret: bigint
     private _commitment: bigint
     private _wasm: BarretenbergWasm
 
@@ -76,6 +77,22 @@ export default class Identity {
      */
     public getNullifier(): bigint {
         return this._nullifier
+    }
+
+    /**
+     * Returns the identity secret.
+     * @returns The identity secret.
+     */
+    public get secret(): bigint {
+        return this._secret
+    }
+
+    /**
+     * Returns the identity secret.
+     * @returns The identity secret.
+     */
+    public getSecret(): bigint {
+        return this._secret
     }
 
     /**

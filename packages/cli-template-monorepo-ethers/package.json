@@ -1,0 +1,44 @@
+{
+    "name": "@semaphore-protocol/cli-template-monorepo-ethers",
+    "version": "3.6.0",
+    "description": "Semaphore Hardhat + Next.js + SemaphoreEthers template.",
+    "license": "Unlicense",
+    "files": [
+        "files.tgz",
+        "scripts/",
+        ".editorconfig",
+        ".env.example",
+        ".eslintignore",
+        ".eslintrc.json",
+        ".prettierignore",
+        ".prettierrc.json",
+        "tsconfig.json",
+        "README.md"
+    ],
+    "scripts": {
+        "dev": "yarn workspaces foreach -pi run dev",
+        "dev:web-app": "yarn workspace monorepo-ethers-web-app dev",
+        "dev:contracts": "yarn workspace monorepo-ethers-contracts dev",
+        "lint": "eslint . --ext .js,.ts",
+        "prettier": "prettier -c .",
+        "prettier:write": "prettier -w .",
+        "copy:contract-artifacts": "ts-node scripts/copy-contract-artifacts.ts",
+        "prepublish": "tar -czf files.tgz .gitignore .yarn .yarnrc.yml apps"
+    },
+    "workspaces": [
+        "apps/*"
+    ],
+    "devDependencies": {
+        "@types/node": "^17.0.9",
+        "@typescript-eslint/eslint-plugin": "^5.9.1",
+        "@typescript-eslint/parser": "^5.9.1",
+        "eslint": "^8.2.0",
+        "eslint-config-airbnb-base": "15.0.0",
+        "eslint-config-airbnb-typescript": "^16.1.0",
+        "eslint-config-prettier": "^8.3.0",
+        "eslint-plugin-import": "^2.25.2",
+        "prettier": "^2.5.1",
+        "ts-node": "^10.8.1",
+        "typescript": "^4.7.3"
+    }
+}

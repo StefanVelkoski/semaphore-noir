@@ -14,7 +14,7 @@ library Pairing {
     // The prime q in the base field F_q for G1
     uint256 constant BASE_MODULUS = 21888242871839275222246405745257275088696311157297823662689037894645226208583;
 
-    // The prime moludus of the scalar field of G1.
+    // The prime modulus of the scalar field of G1.
     uint256 constant SCALAR_MODULUS = 21888242871839275222246405745257275088548364400416034343698204186575808495617;
 
     struct G1Point {
@@ -89,8 +89,8 @@ library Pairing {
     /// @return r the product of a point on G1 and a scalar, i.e.
     /// p == p.scalar_mul(1) and p.addition(p) == p.scalar_mul(2) for all points p.
     function scalar_mul(G1Point memory p, uint256 s) public view returns (G1Point memory r) {
-        // By EIP-196 the values p.X and p.Y are verified to less than the BASE_MODULUS and
-        // form a valid point on the curve. But the scalar is not verified, so we do that explicitelly.
+        // By EIP-196 the values p.X and p.Y are verified to be less than the BASE_MODULUS and
+        // form a valid point on the curve. But the scalar is not verified, so we do that explicitly.
         if (s >= SCALAR_MODULUS) {
             revert InvalidProof();
         }

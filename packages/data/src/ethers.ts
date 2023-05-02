@@ -24,7 +24,7 @@ export default class SemaphoreEthers {
      * @param networkOrEthereumURL Ethereum network or custom URL.
      * @param options Ethers options.
      */
-    constructor(networkOrEthereumURL: Network | string = "goerli", options: EthersOptions = {}) {
+    constructor(networkOrEthereumURL: Network | string = "sepolia", options: EthersOptions = {}) {
         checkParameter(networkOrEthereumURL, "networkOrSubgraphURL", "string")
 
         if (options.provider) {
@@ -43,16 +43,28 @@ export default class SemaphoreEthers {
 
         switch (networkOrEthereumURL) {
             case "arbitrum":
-                options.address = "0x72dca3c971136bf47BACF16A141f0fcfAC925aeC"
-                options.startBlock = 54934350
+                options.address = "0xc60E0Ee1a2770d5F619858C641f14FC4a6401520"
+                options.startBlock = 77278430
+                break
+            case "arbitrum-goerli":
+                options.address = "0x3889927F0B5Eb1a02C6E2C20b39a1Bd4EAd76131"
+                options.startBlock = 15174410
                 break
             case "maticmum":
-                options.address = "0xF864ABa335073e01234c9a88888BfFfa965650bD"
-                options.startBlock = 32902215
+                options.address = "0x3889927F0B5Eb1a02C6E2C20b39a1Bd4EAd76131"
+                options.startBlock = 33995010
                 break
             case "goerli":
-                options.address = "0x89490c95eD199D980Cdb4FF8Bac9977EDb41A7E7"
-                options.startBlock = 8255063
+                options.address = "0x3889927F0B5Eb1a02C6E2C20b39a1Bd4EAd76131"
+                options.startBlock = 8777695
+                break
+            case "sepolia":
+                options.address = "0x3889927F0B5Eb1a02C6E2C20b39a1Bd4EAd76131"
+                options.startBlock = 3231111
+                break
+            case "optimism-goerli":
+                options.address = "0x3889927F0B5Eb1a02C6E2C20b39a1Bd4EAd76131"
+                options.startBlock = 7632846
                 break
             default:
                 if (options.address === undefined) {
@@ -263,7 +275,7 @@ export default class SemaphoreEthers {
             signal: event.signal.toString(),
             merkleTreeRoot: event.merkleTreeRoot.toString(),
             externalNullifier: event.externalNullifier.toString(),
-            nullifierHash: event.externalNullifier.toString()
+            nullifierHash: event.nullifierHash.toString()
         }))
     }
 }
