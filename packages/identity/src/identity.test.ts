@@ -8,7 +8,7 @@ import Identity from './identity';
 describe("Identity", () => {
     let wasm: BarretenbergWasm
 
-    before(async () => {
+    beforeAll(async () => {
       wasm = await BarretenbergWasm.new()
       await wasm.init()
     });

@@ -2454,21 +2454,28 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@noir-lang/aztec_backend@npm:0.12.0, @noir-lang/aztec_backend@npm:^0.12.0":
+"@noir-lang/aztec_backend@github:kobyhallx/aztec-backend#1bcdd4bf67dad1ab977867f1d655bcab7085a518":
+  version: 0.1.0-0c3b2f2
+  resolution: "@noir-lang/aztec_backend@https://github.com/kobyhallx/aztec-backend.git#commit=1bcdd4bf67dad1ab977867f1d655bcab7085a518"
+  checksum: ed560139552a226ac6d2fc5b43af8be14568b300ec52cb61403de3a9f10e3a8dc95bc4220af064fb3f88e4832645ba55f5f569813fea73f6b60b6218db5191f1
+  languageName: node
+  linkType: hard
+
+"@noir-lang/aztec_backend@npm:^0.12.0":
   version: 0.12.0
   resolution: "@noir-lang/aztec_backend@npm:0.12.0"
   checksum: 3e41752b8ab4726fd598d64b879735080b0a1f56500f9a88c00b5e2742bbc9c762c63f4083b622fa2148c62868c4ca4bcc1ebed7a9702d180a5e91b554bcc2cc
   languageName: node
   linkType: hard
 
-"@noir-lang/barretenberg@npm:^2.19.0":
-  version: 2.22.0
-  resolution: "@noir-lang/barretenberg@npm:2.22.0"
+"@noir-lang/barretenberg@github:noir-lang/barretenberg#39a1547875f941ef6640217a42d8f34972425c97":
+  version: 2.19.0-8c75fc36
+  resolution: "@noir-lang/barretenberg@https://github.com/noir-lang/barretenberg.git#commit=39a1547875f941ef6640217a42d8f34972425c97"
   dependencies:
-    "@noir-lang/aztec_backend": 0.12.0
     "@types/detect-node": ^2.0.0
     "@types/levelup": ^4.3.0
-    buffer-browserify: ^0.2.5
+    buffer: 6.0.3
+    crypto: "npm:crypto-browserify@3.12.0"
     debug: ^4.1.1
     detect-node: ^2.0.4
     fs-extra: 10.0.0
@@ -2478,9 +2485,12 @@ __metadata:
     node-fetch: 2.6.1
     promise-readable: ^5.0.4
     sha3: ^2.1.3
+    stream: "npm:stream-browserify@3.0.0"
     threads: 1.7.0
     tslib: ^2.0.0
-  checksum: 6cab0b758cf3c9e786a3b0d663eea74ec9253023a9e7d98672eb7fc2f9fa02cc203ca41a85deca3c97cf1c063b52995ed890c00b2d13fcd1568d3648f252b015
+  peerDependencies:
+    "@noir-lang/aztec_backend": "*"
+  checksum: 6cb972e1dc16695c88577516233f64c0bee17d207f936226fc3fc854bdcf36c346615db642ed96e6093edd5e9d59f35070bef85ca20074ae2a505ced89d0998d
   languageName: node
   linkType: hard
 
@@ -3253,6 +3263,9 @@ __metadata:
     "@ethersproject/bignumber": ^5.7.0
     "@ethersproject/bytes": ^5.7.0
     "@ethersproject/keccak256": ^5.7.0
+    "@noir-lang/aztec_backend": "github:kobyhallx/aztec-backend#1bcdd4bf67dad1ab977867f1d655bcab7085a518"
+    "@noir-lang/barretenberg": "github:noir-lang/barretenberg#39a1547875f941ef6640217a42d8f34972425c97"
+    "@noir-lang/noir_wasm": ^0.4.1-3d2233d
     "@rollup/plugin-commonjs": ^24.0.1
     "@rollup/plugin-node-resolve": ^15.0.1
     "@zk-kit/incremental-merkle-tree": 1.0.0
@@ -3288,8 +3301,8 @@ __metadata:
     "@ethersproject/keccak256": ^5.7.0
     "@ethersproject/random": ^5.5.1
     "@ethersproject/strings": ^5.6.1
-    "@noir-lang/aztec_backend": ^0.12.0
-    "@noir-lang/barretenberg": ^2.19.0
+    "@noir-lang/aztec_backend": "github:kobyhallx/aztec-backend#1bcdd4bf67dad1ab977867f1d655bcab7085a518"
+    "@noir-lang/barretenberg": "github:noir-lang/barretenberg#39a1547875f941ef6640217a42d8f34972425c97"
     "@noir-lang/noir_wasm": ^0.4.1-3d2233d
     "@rollup/plugin-commonjs": ^24.0.1
     "@rollup/plugin-node-resolve": ^15.0.1
@@ -3309,6 +3322,9 @@ __metadata:
     "@ethersproject/bytes": ^5.7.0
     "@ethersproject/keccak256": ^5.7.0
     "@ethersproject/strings": ^5.5.0
+    "@noir-lang/aztec_backend": "github:kobyhallx/aztec-backend#1bcdd4bf67dad1ab977867f1d655bcab7085a518"
+    "@noir-lang/barretenberg": "github:noir-lang/barretenberg#39a1547875f941ef6640217a42d8f34972425c97"
+    "@noir-lang/noir_wasm": ^0.4.1-3d2233d
     "@rollup/plugin-json": ^5.0.1
     "@zk-kit/incremental-merkle-tree": 0.4.3
     ffjavascript: ^0.2.54
@@ -5092,13 +5108,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"base64-js@npm:0.0.8":
-  version: 0.0.8
-  resolution: "base64-js@npm:0.0.8"
-  checksum: e95d2fa4b9000789fedd1e1ebac7830a70f5b1c06c72b2cf7862a48335af5d42229c0deda5085b2c8e403e479b612a55cd682bd4438838980d07cfc21c91e750
-  languageName: node
-  linkType: hard
-
 "base64-js@npm:^1.3.1":
   version: 1.5.1
   resolution: "base64-js@npm:1.5.1"
@@ -5488,15 +5497,6 @@ __metadata:
     buffer-alloc-unsafe: ^1.1.0
     buffer-fill: ^1.0.0
   checksum: 560cd27f3cbe73c614867da373407d4506309c62fe18de45a1ce191f3785ec6ca2488d802ff82065798542422980ca25f903db078c57822218182c37c3576df5
-  languageName: node
-  linkType: hard
-
-"buffer-browserify@npm:^0.2.5":
-  version: 0.2.5
-  resolution: "buffer-browserify@npm:0.2.5"
-  dependencies:
-    base64-js: 0.0.8
-  checksum: 2530d5fe57018e6f7eb4d3efff20d41a497dea8da93123c9d6fdcab923a8f8dacd83403cafa37f923c0a6b65935416440b87a2c0193338c55ba4cb6de8ebcb71
   languageName: node
   linkType: hard
 
@@ -6870,7 +6870,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"crypto-browserify@npm:3.12.0":
+"crypto-browserify@npm:3.12.0, crypto@npm:crypto-browserify@3.12.0":
   version: 3.12.0
   resolution: "crypto-browserify@npm:3.12.0"
   dependencies:
@@ -10475,7 +10475,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"inherits@npm:2, inherits@npm:2.0.4, inherits@npm:^2.0.1, inherits@npm:^2.0.3, inherits@npm:^2.0.4, inherits@npm:~2.0.3":
+"inherits@npm:2, inherits@npm:2.0.4, inherits@npm:^2.0.1, inherits@npm:^2.0.3, inherits@npm:^2.0.4, inherits@npm:~2.0.3, inherits@npm:~2.0.4":
   version: 2.0.4
   resolution: "inherits@npm:2.0.4"
   checksum: 4a48a733847879d6cf6691860a6b1e3f0f4754176e4d71494c41f3475553768b10f84b5ce1d40fbd0e34e6bfbb864ee35858ad4dd2cf31e02fc4a154b724d7f1
@@ -14594,6 +14594,17 @@ __metadata:
   languageName: node
   linkType: hard
 
+"readable-stream@npm:^3.5.0":
+  version: 3.6.2
+  resolution: "readable-stream@npm:3.6.2"
+  dependencies:
+    inherits: ^2.0.3
+    string_decoder: ^1.1.1
+    util-deprecate: ^1.0.1
+  checksum: bdcbe6c22e846b6af075e32cf8f4751c2576238c5043169a1c221c92ee2878458a816a4ea33f4c67623c0b6827c8a400409bfb3cf0bf3381392d0b1dfb52ac8d
+  languageName: node
+  linkType: hard
+
 "readdirp@npm:~3.2.0":
   version: 3.2.0
   resolution: "readdirp@npm:3.2.0"
@@ -16018,6 +16029,16 @@ __metadata:
   version: 1.1.1
   resolution: "stealthy-require@npm:1.1.1"
   checksum: 6805b857a9f3a6a1079fc6652278038b81011f2a5b22cbd559f71a6c02087e6f1df941eb10163e3fdc5391ab5807aa46758d4258547c1f5ede31e6d9bfda8dd3
+  languageName: node
+  linkType: hard
+
+"stream@npm:stream-browserify@3.0.0":
+  version: 3.0.0
+  resolution: "stream-browserify@npm:3.0.0"
+  dependencies:
+    inherits: ~2.0.4
+    readable-stream: ^3.5.0
+  checksum: 4c47ef64d6f03815a9ca3874e2319805e8e8a85f3550776c47ce523b6f4c6cd57f40e46ec6a9ab8ad260fde61863c2718f250d3bedb3fe9052444eb9abfd9921
   languageName: node
   linkType: hard
 

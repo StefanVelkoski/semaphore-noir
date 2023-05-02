@@ -8,7 +8,7 @@ import { expect } from "chai";
 describe("Group", () => {
     let wasm: BarretenbergWasm
 
-    before(async () => {
+    beforeAll(async () => {
       wasm = await BarretenbergWasm.new()
       await wasm.init()
     });

@@ -1,3 +1,4 @@
+import { BarretenbergWasm } from '@noir-lang/barretenberg';
 import { formatBytes32String } from "@ethersproject/strings"
 import { Group } from "@semaphore-protocol/group"
 import { Identity } from "@semaphore-protocol/identity"
@@ -9,6 +10,7 @@ import { FullProof } from "./types"
 import unpackProof from "./unpackProof"
 import verifyProof from "./verifyProof"
 
+
 describe("Proof", () => {
     const treeDepth = Number(process.env.TREE_DEPTH) || 20
 
@@ -18,7 +20,14 @@ describe("Proof", () => {
     const wasmFilePath = `./snark-artifacts/${treeDepth}/semaphore.wasm`
     const zkeyFilePath = `./snark-artifacts/${treeDepth}/semaphore.zkey`
 
-    const identity = new Identity()
+    let wasm: BarretenbergWasm
+
+    beforeAll(async () => {
+      wasm = await BarretenbergWasm.new()
+      await wasm.init()
+    });
+
+    const identity = new Identity(wasm)
 
     let fullProof: FullProof
     let curve: any
@@ -33,7 +42,7 @@ describe("Proof", () => {
 
     describe("# generateProof", () => {
         it("Should not generate Semaphore proofs if the identity is not part of the group", async () => {
-            const group = new Group(treeDepth)
+            const group = new Group(wasm, treeDepth)
 
             group.addMembers([BigInt(1), BigInt(2)])
 
@@ -47,7 +56,7 @@ describe("Proof", () => {
         })
 
         it("Should not generate a Semaphore proof with default snark artifacts with Node.js", async () => {
-            const group = new Group(treeDepth)
+            const group = new Group(wasm, treeDepth)
 
             group.addMembers([BigInt(1), BigInt(2), identity.commitment])
 
@@ -57,7 +66,7 @@ describe("Proof", () => {
         })
 
         it("Should generate a Semaphore proof passing a group as parameter", async () => {
-            const group = new Group(treeDepth)
+            const group = new Group(wasm, treeDepth)
 
             group.addMembers([BigInt(1), BigInt(2), identity.commitment])
 
@@ -71,7 +80,7 @@ describe("Proof", () => {
         }, 20000)
 
         it("Should generate a Semaphore proof passing a Merkle proof as parameter", async () => {
-            const group = new Group(treeDepth)
+            const group = new Group(wasm, treeDepth)
 
             group.addMembers([BigInt(1), BigInt(2), identity.commitment])
 
