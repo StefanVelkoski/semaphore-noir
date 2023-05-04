@@ -1,3 +1,6 @@
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-ignore
+import { BarretenbergWasm } from '@noir-lang/barretenberg';
 import { Identity } from "@semaphore-protocol/identity"
 import {
     GenerateAuthenticationOptionsOpts as AuthenticationOptions,
@@ -30,10 +33,17 @@ jest.mock("@simplewebauthn/browser", () => ({
 }))
 
 describe("HeyAuthn", () => {
+    let wasm: BarretenbergWasm
+
+    beforeAll(async () => {
+      wasm = await BarretenbergWasm.new()
+      await wasm.init()
+    });
+
     describe("# getIdentity", () => {
         it("Should get the identity of the HeyAuthn instance", async () => {
-            const expectedIdentity = new Identity()
-            const heyAuthn = new HeyAuthn(expectedIdentity)
+            const expectedIdentity = new Identity(wasm)
+            const heyAuthn = new HeyAuthn(wasm, expectedIdentity)
             const identity = heyAuthn.getIdentity()
 
             expect(expectedIdentity.toString()).toEqual(identity.toString())
@@ -50,7 +60,7 @@ describe("HeyAuthn", () => {
 
         it("Should create an identity identical to the one created registering credential", async () => {
             const { identity } = await HeyAuthn.fromRegister(options)
-            const expectedIdentity = new Identity("my-new-credential")
+            const expectedIdentity = new Identity(wasm, "my-new-credential")
 
             expect(expectedIdentity.trapdoor).toEqual(identity.trapdoor)
             expect(expectedIdentity.nullifier).toEqual(identity.nullifier)
@@ -65,7 +75,7 @@ describe("HeyAuthn", () => {
 
         it("Should create an identity identical to the one created authenticating credential", async () => {
             const { identity } = await HeyAuthn.fromAuthenticate(options)
-            const expectedIdentity = new Identity("my-existing-credential")
+            const expectedIdentity = new Identity(wasm, "my-existing-credential")
 
             expect(expectedIdentity.trapdoor).toEqual(identity.trapdoor)
             expect(expectedIdentity.nullifier).toEqual(identity.nullifier)

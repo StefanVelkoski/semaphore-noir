@@ -1,3 +1,6 @@
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-ignore
+import { BarretenbergWasm } from '@noir-lang/barretenberg';
 import {
     generateAuthenticationOptions,
     generateRegistrationOptions,
@@ -8,11 +11,15 @@ import { startAuthentication, startRegistration } from "@simplewebauthn/browser"
 import { Identity } from "@semaphore-protocol/identity"
 
 export default class HeyAuthn {
+    private _wasm: BarretenbergWasm
     private _identity: Identity
 
-    constructor(identity: Identity) {
+
+    constructor(wasm: BarretenbergWasm, identity: Identity) {
+        this._wasm = wasm,
         this._identity = identity
     }
+
 
     /**
      * Registers a new WebAuthn credential and returns its HeyAuthn instance.
@@ -21,12 +28,18 @@ export default class HeyAuthn {
      * @returns A HeyAuthn instance with the newly registered credential.
      */
     public static async fromRegister(options: RegistrationOptions) {
+        let wasm: BarretenbergWasm
+
+        wasm = await BarretenbergWasm.new()
+        await wasm.init()
+
         const registrationOptions = generateRegistrationOptions(options)
         const { id } = await startRegistration(registrationOptions)
 
-        const identity = new Identity(id)
 
-        return new HeyAuthn(identity)
+        const identity = new Identity(wasm, id)
+
+        return new HeyAuthn(wasm, identity)
     }
 
     /**
@@ -36,12 +49,16 @@ export default class HeyAuthn {
      * @returns A HeyAuthn instance with the existing credential.
      */
     public static async fromAuthenticate(options: AuthenticationOptions) {
+        let wasm: BarretenbergWasm
+
+        wasm = await BarretenbergWasm.new()
+        await wasm.init()
         const authenticationOptions = generateAuthenticationOptions(options)
         const { id } = await startAuthentication(authenticationOptions)
 
-        const identity = new Identity(id)
+        const identity = new Identity(wasm, id)
 
-        return new HeyAuthn(identity)
+        return new HeyAuthn(wasm, identity)
     }
 
     /**
