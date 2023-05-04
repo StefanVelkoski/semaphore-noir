@@ -1,6 +1,5 @@
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore
-import { BarretenbergWasm } from '@noir-lang/barretenberg';
 import {
     generateAuthenticationOptions,
     generateRegistrationOptions,
@@ -9,14 +8,16 @@ import {
 } from "@simplewebauthn/server"
 import { startAuthentication, startRegistration } from "@simplewebauthn/browser"
 import { Identity } from "@semaphore-protocol/identity"
+import { pedersenFactory } from "./hash";
+import { type HashFunction } from "./types";
 
 export default class HeyAuthn {
-    private _wasm: BarretenbergWasm
+    private _hash: HashFunction
     private _identity: Identity
 
 
-    constructor(wasm: BarretenbergWasm, identity: Identity) {
-        this._wasm = wasm,
+    constructor(hash: HashFunction, identity: Identity) {
+        this._hash = hash,
         this._identity = identity
     }
 
@@ -27,19 +28,14 @@ export default class HeyAuthn {
      * @param {GenerateRegistrationOptionsOpts} options - WebAuthn options for registering a new credential.
      * @returns A HeyAuthn instance with the newly registered credential.
      */
-    public static async fromRegister(options: RegistrationOptions) {
-        let wasm: BarretenbergWasm
-
-        wasm = await BarretenbergWasm.new()
-        await wasm.init()
-
+    public static async fromRegister(options: RegistrationOptions, hash: HashFunction) {
         const registrationOptions = generateRegistrationOptions(options)
         const { id } = await startRegistration(registrationOptions)
 
 
-        const identity = new Identity(wasm, id)
+        const identity = new Identity(hash, id)
 
-        return new HeyAuthn(wasm, identity)
+        return new HeyAuthn(hash, identity)
     }
 
     /**
@@ -48,17 +44,13 @@ export default class HeyAuthn {
      * @param {GenerateAuthenticationOptionsOpts} options - WebAuthn options for authenticating an existing credential.
      * @returns A HeyAuthn instance with the existing credential.
      */
-    public static async fromAuthenticate(options: AuthenticationOptions) {
-        let wasm: BarretenbergWasm
-
-        wasm = await BarretenbergWasm.new()
-        await wasm.init()
+    public static async fromAuthenticate(options: AuthenticationOptions, hash: HashFunction) {
         const authenticationOptions = generateAuthenticationOptions(options)
         const { id } = await startAuthentication(authenticationOptions)
 
-        const identity = new Identity(wasm, id)
+        const identity = new Identity(hash, id)
 
-        return new HeyAuthn(wasm, identity)
+        return new HeyAuthn(hash, identity)
     }
 
     /**
