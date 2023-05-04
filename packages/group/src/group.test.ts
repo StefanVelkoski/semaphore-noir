@@ -1,7 +1,7 @@
 import Group from "./group";
 import { expect } from "chai";
 import { type HashFunction } from "./types/index.ts";
-import { pedersenFactory } from "./hash";
+import { pedersenFactory } from "@semaphore-protocol/identity"
 
 describe("Group", () => {
   let pedersen: HashFunction;

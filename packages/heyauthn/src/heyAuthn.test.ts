@@ -1,11 +1,10 @@
-import { Identity } from "@semaphore-protocol/identity"
+import { Identity, pedersenFactory } from "@semaphore-protocol/identity"
 import {
     GenerateAuthenticationOptionsOpts as AuthenticationOptions,
     GenerateRegistrationOptionsOpts as RegistrationOptions
 } from "@simplewebauthn/server"
 
 import HeyAuthn from "./heyAuthn"
-import { pedersenFactory } from "./hash";
 import { type HashFunction } from "./types";
 
 jest.mock("@simplewebauthn/browser", () => ({
