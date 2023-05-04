@@ -1,3 +1,5 @@
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-ignore
 import {
     generateAuthenticationOptions,
     generateRegistrationOptions,
@@ -6,13 +8,19 @@ import {
 } from "@simplewebauthn/server"
 import { startAuthentication, startRegistration } from "@simplewebauthn/browser"
 import { Identity } from "@semaphore-protocol/identity"
+import { pedersenFactory } from "./hash";
+import { type HashFunction } from "./types";
 
 export default class HeyAuthn {
+    private _hash: HashFunction
     private _identity: Identity
 
-    constructor(identity: Identity) {
+
+    constructor(hash: HashFunction, identity: Identity) {
+        this._hash = hash,
         this._identity = identity
     }
+
 
     /**
      * Registers a new WebAuthn credential and returns its HeyAuthn instance.
@@ -20,13 +28,14 @@ export default class HeyAuthn {
      * @param {GenerateRegistrationOptionsOpts} options - WebAuthn options for registering a new credential.
      * @returns A HeyAuthn instance with the newly registered credential.
      */
-    public static async fromRegister(options: RegistrationOptions) {
+    public static async fromRegister(options: RegistrationOptions, hash: HashFunction) {
         const registrationOptions = generateRegistrationOptions(options)
         const { id } = await startRegistration(registrationOptions)
 
-        const identity = new Identity(id)
 
-        return new HeyAuthn(identity)
+        const identity = new Identity(hash, id)
+
+        return new HeyAuthn(hash, identity)
     }
 
     /**
@@ -35,13 +44,13 @@ export default class HeyAuthn {
      * @param {GenerateAuthenticationOptionsOpts} options - WebAuthn options for authenticating an existing credential.
      * @returns A HeyAuthn instance with the existing credential.
      */
-    public static async fromAuthenticate(options: AuthenticationOptions) {
+    public static async fromAuthenticate(options: AuthenticationOptions, hash: HashFunction) {
         const authenticationOptions = generateAuthenticationOptions(options)
         const { id } = await startAuthentication(authenticationOptions)
 
-        const identity = new Identity(id)
+        const identity = new Identity(hash, id)
 
-        return new HeyAuthn(identity)
+        return new HeyAuthn(hash, identity)
     }
 
     /**
