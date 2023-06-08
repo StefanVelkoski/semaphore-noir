@@ -1,7 +1,10 @@
 {
-    "name": "circuits",
-    "private": true,
-    "dependencies": {
-        "circomlib": "^2.0.2"
-    }
+  "name": "circuits",
+  "packageManager": "yarn@3.2.1",
+  "dependencies": {
+    "@noir-lang/aztec_backend": "0.2.0",
+    "@noir-lang/barretenberg": "github:noir-lang/barretenberg#39a1547875f941ef6640217a42d8f34972425c97",
+    "@noir-lang/noir_wasm": "0.3.2-fa0e9cff",
+    "json2toml": "^4.0.1"
+  }
 }

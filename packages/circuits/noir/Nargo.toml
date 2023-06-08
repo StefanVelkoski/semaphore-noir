@@ -1,5 +1,0 @@
-[package]
-authors = ["Simon Oswald, Stefan Velkoski"]
-compiler_version = "0.1"
-
-[dependencies]

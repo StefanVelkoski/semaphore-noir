@@ -1,8 +1,0 @@
-id_nullifier = "1"
-id_trapdoor = "1"
-indices = "3"
-siblings = [
-  "1",
-  "1",
-]
-external_nullifier = "123"
