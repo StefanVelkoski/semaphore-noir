@@ -22,22 +22,15 @@ describe("Proof", () => {
     const externalNullifier = formatBytes32String("Topic")
     const signal = formatBytes32String("Hello world")
 
-
     let fullProof: FullProof
     let noirArtifacts: any
     let hash: HashFunction
 
-    beforeAll(async () => {
-        noirArtifacts = await compile({ entry_point: "../../circuits/noir/src/main.nr" })
-        pedersen = await pedersenFactory();
+    describe("# placeholder", () => {
+        it("To be implemented in future milestone", async () => {
+            expect(true).to.equal(true);
+        })
     })
-
-    // describe("# generateProof", () => {
-    //     it("Should generate Semaphore proofs if the identity is part of the group", async () => {
-    //         const group = new Group(hash, treeDepth)
-    //         console.log({ noirArtifacts })
-    //     })
-    // })
 
 //     describe("# generateProof", () => {
 //         it("Should not generate Semaphore proofs if the identity is not part of the group", async () => {

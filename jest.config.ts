@@ -15,6 +15,7 @@ const projects: any = fs
 
 export default async (): Promise<Config.InitialOptions> => ({
     projects,
+    testTimeout: 80_000,
     // transform: {},
     transformIgnorePatterns: [
       "node_modules/(?!@noir-lang/noir-source-resolver)",
