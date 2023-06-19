@@ -12,6 +12,15 @@ describe("Identity", () => {
   });
 
   describe("Identity", () => {
+      it("Should not create a identity if the parameter is not valid", () => {
+        const fun1 = () => new Identity(pedersen, 13 as any)
+        const fun2 = () => new Identity(pedersen, true as any)
+        const fun3 = () => new Identity(pedersen,(() => true) as any)
+
+        expect(fun1).to.throw("message.match is not a function")
+        expect(fun2).to.throw("message.match is not a function")
+        expect(fun3).to.throw("message.match is not a function")
+    })
     it("Should create random identities", () => {
       const identity1 = new Identity(pedersen);
       const identity2 = new Identity(pedersen);
