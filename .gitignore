@@ -89,3 +89,6 @@ packages/contracts/deployed-contracts/localhost.json
 
 # Other
 snark-artifacts
+
+packages/circuits/proofs
+packages/circuits/target

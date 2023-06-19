@@ -3,10 +3,12 @@ import { BytesLike, Hexable } from "@ethersproject/bytes"
 import { Group } from "@semaphore-protocol/group"
 import type { Identity } from "@semaphore-protocol/identity"
 import { MerkleProof } from "@zk-kit/incremental-merkle-tree"
-import { groth16 } from "snarkjs"
-import hash from "./hash"
 import packProof from "./packProof"
 import { FullProof, SnarkArtifacts } from "./types"
+import {
+  setup_generic_prover_and_verifier,
+  create_proof,
+} from "@noir-lang/barretenberg";
 
 /**
  * Generates a Semaphore proof.
@@ -22,7 +24,8 @@ export default async function generateProof(
     groupOrMerkleProof: Group | MerkleProof,
     externalNullifier: BytesLike | Hexable | number | bigint,
     signal: BytesLike | Hexable | number | bigint,
-    snarkArtifacts?: SnarkArtifacts
+    hash: HashFunction,
+    noirArtifacts: any
 ): Promise<FullProof> {
     let merkleProof: MerkleProof
 
@@ -38,29 +41,24 @@ export default async function generateProof(
         merkleProof = groupOrMerkleProof
     }
 
-    if (!snarkArtifacts) {
-        snarkArtifacts = {
-            wasmFilePath: `https://www.trusted-setup-pse.org/semaphore/${merkleProof.siblings.length}/semaphore.wasm`,
-            zkeyFilePath: `https://www.trusted-setup-pse.org/semaphore/${merkleProof.siblings.length}/semaphore.zkey`
-        }
+    const [prover] = await setup_generic_prover_and_verifier(noirArtifacts.circuit)
+
+    const abi = {
+        identityTrapdoor: trapdoor,
+        identityNullifier: nullifier,
+        treePathIndices: merkleProof.pathIndices,
+        treeSiblings: merkleProof.siblings,
+        externalNullifier: hash(externalNullifier),
+        signalHash: hash(signal)
     }
 
-    const { proof, publicSignals } = await groth16.fullProve(
-        {
-            identityTrapdoor: trapdoor,
-            identityNullifier: nullifier,
-            treePathIndices: merkleProof.pathIndices,
-            treeSiblings: merkleProof.siblings,
-            externalNullifier: hash(externalNullifier),
-            signalHash: hash(signal)
-        },
-        snarkArtifacts.wasmFilePath,
-        snarkArtifacts.zkeyFilePath
-    )
+    console.log({ abi })
+
+    const proof = await create_proof(prover, noirArtifacts.acir, abi);
 
     return {
-        merkleTreeRoot: publicSignals[0],
-        nullifierHash: publicSignals[1],
+        merkleTreeRoot: 0,
+        nullifierHash: 0,
         signal: BigNumber.from(signal).toString(),
         externalNullifier: BigNumber.from(externalNullifier).toString(),
         proof: packProof(proof)
