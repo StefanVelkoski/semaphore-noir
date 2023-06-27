@@ -18,10 +18,10 @@ fn main(
   // compute the root of the merkle tree given the provided merkle merkle path
   // and the reconstructed id commitment
   // this can later be verified against a trusted root onchain or offchain
-  constrain 1 == std::merkle::check_membership(root, id_commitment[0], indices, siblings);
+  assert(1 == std::merkle::check_membership(root, id_commitment[0], indices, siblings));
 
   // the nullifier hash allows us to check how often a given identity signaled per topic
   // every topic should use a distinct external nullifier
-  constrain nullifier_hash == std::hash::pedersen([external_nullifier, id_nullifier])[0];
-  constrain signal_hash * signal_hash == signal_hash * signal_hash;
+  assert(nullifier_hash == std::hash::pedersen([external_nullifier, id_nullifier])[0]);
+  assert(signal_hash * signal_hash == signal_hash * signal_hash);
 }
