@@ -3,35 +3,17 @@
 import { BarretenbergWasm, SinglePedersen } from "@noir-lang/barretenberg";
 import { serialise_public_inputs } from "@noir-lang/aztec_backend";
 import { type HashFunction, type Node } from "./types.ts";
-
-/**
- * Takes a message string and encodes it as an array of bigints.
- * @param message The message to be hashed.
- * @returns The message encoded as array of bigints.
- */
-export function stringToFields(message: string): bigint[] {
-  // the message string can have arbitrary length
-  // but the circuit can only accept 32 Byte Fields encoded as 64 char hex strings
-  // which is why we have to serialise the message like this
-  const splitMessage = message.match(/.{1,32}/g);
-  if (splitMessage == null) return [];
-
-  return splitMessage.map((m) => {
-    const hex = Buffer.from(m).toString("hex");
-    return BigInt(`0x${hex}`);
-  });
-}
+import { newBarretenbergApiSync, BarretenbergApiSync } from "@aztec/bb.js/dest/node";
+import { Fr } from "@aztec/bb.js/dest/node/types";
 
 /**
  * Serialises an array of bigints to be hashed with pedersen
  * @param message The values to be hashed.
  * @returns The serialised values.
  */
-export function serialiseInputs(values: bigint[]): Buffer[] {
+export function serialiseInputs(values: bigint[]): Fr[] {
   return values.map((v) => {
-    const hex = v.toString(16);
-    const paddedHex = hex.length % 2 === 0 ? "0x" + hex : "0x0" + hex;
-    return Buffer.from(serialise_public_inputs([paddedHex]));
+    return new Fr(v)
   });
 }
 
@@ -41,13 +23,21 @@ export function serialiseInputs(values: bigint[]): Buffer[] {
  * @returns The message digest.
  */
 export default function hash(
-  wasm: BarretenbergWasm,
+  wasm: BarretenbergApiSync,
   preimage: bigint[]
 ): bigint {
-  const pedersen = new SinglePedersen(wasm);
 
-  const hash: Buffer = pedersen.compressInputs(serialiseInputs(preimage));
-  return BigInt(`0x${hash.toString("hex")}`);
+  const hash = wasm.pedersenPlookupCompress(serialiseInputs(preimage));
+
+  console.log({ input: serialiseInputs(preimage) });
+  console.log({ pedersenHashMultiple: wasm.pedersenHashMultiple(serialiseInputs(preimage)) });
+  console.log({ pedersenCompress: wasm.pedersenCompress(serialiseInputs(preimage)) });
+  console.log({ pedersenPlookupCompress: wasm.pedersenPlookupCompress(serialiseInputs(preimage)) });
+  console.log({ pedersenCommit: wasm.pedersenCommit(serialiseInputs(preimage)) });
+  console.log({ pedersenPlookupCommit: wasm.pedersenPlookupCommit(serialiseInputs(preimage)) });
+
+
+  return BigInt(`${hash.toString("hex")}`);
 }
 
 /**
@@ -55,7 +45,6 @@ export default function hash(
  * @returns pedersen hash function
  */
 export async function pedersenFactory(): Promise<HashFunction> {
-  const wasm = new BarretenbergWasm();
-  await wasm.init();
+  const wasm = await newBarretenbergApiSync(4);
   return (preimage: Node[]): Node => hash(wasm, preimage);
 }
