@@ -3,10 +3,10 @@
     "version": "3.6.0",
     "description": "A library to generate and verify Semaphore proofs.",
     "license": "MIT",
-    "main": "dist/index.node.js",
+    "main": "./src/index.ts",
     "exports": {
-        "import": "./dist/index.mjs",
-        "require": "./dist/index.node.js"
+        "import": "./src/index.ts",
+        "require": "./src/index.ts"
     },
     "types": "dist/types/index.d.ts",
     "files": [

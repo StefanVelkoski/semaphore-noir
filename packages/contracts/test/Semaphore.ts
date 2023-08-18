@@ -2,7 +2,6 @@
 /* eslint-disable jest/valid-expect */
 import { Group } from "@semaphore-protocol/group"
 import { Identity } from "@semaphore-protocol/identity"
-import { FullProof, generateProof } from "@semaphore-protocol/proof"
 import { expect } from "chai"
 import { constants, Signer } from "ethers"
 import { ethers, run } from "hardhat"
@@ -19,9 +18,6 @@ describe("Semaphore", () => {
     const groupId = 1
     const group = new Group(groupId, treeDepth)
     const members = createIdentityCommitments(3)
-
-    const wasmFilePath = `../../snark-artifacts/${treeDepth}/semaphore.wasm`
-    const zkeyFilePath = `../../snark-artifacts/${treeDepth}/semaphore.zkey`
 
     before(async () => {
         const { semaphore, pairingAddress } = await run("deploy:semaphore", {
@@ -242,10 +238,6 @@ describe("Semaphore", () => {
         before(async () => {
             await semaphoreContract.addMembers(groupId, [members[1], members[2]])
 
-            fullProof = await generateProof(identity, group, group.root, signal, {
-                wasmFilePath,
-                zkeyFilePath
-            })
         })
 
         it("Should not verify a proof if the group does not exist", async () => {

@@ -91,5 +91,8 @@
     },
     "resolutions": {
         "changelogithub@0.12.7": "patch:changelogithub@npm:0.12.7#.yarn/patches/changelogithub-npm-0.12.7-72f348805d.patch"
+    },
+    "dependencies": {
+        "ethers": "^6.7.1"
     }
 }
