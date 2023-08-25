@@ -1,18 +1,20 @@
 import { Group } from "@semaphore-protocol/group"
 import { Identity } from "@semaphore-protocol/identity"
-import { FullProof, generateProof } from "@semaphore-protocol/proof"
+import { FullProof } from "@semaphore-protocol/proof"
 import { expect } from "chai"
 import { Signer } from "ethers"
 import { ethers, run } from "hardhat"
 import { Pairing, SemaphoreVoting } from "../build/typechain"
+import { generateProof } from "./utils"
 
 describe("SemaphoreVoting", () => {
     let semaphoreVotingContract: SemaphoreVoting
     let pairingContract: Pairing
+    let semaphoreVerifierContract: SemaphoreVerifier
     let accounts: Signer[]
     let coordinator: string
 
-    const treeDepth = Number(process.env.TREE_DEPTH) || 20
+    const treeDepth = Number(process.env.TREE_DEPTH) || 16
     const pollIds = [1, 2, 3]
     const encryptionKey = BigInt(0)
     const decryptionKey = BigInt(0)
@@ -21,12 +23,13 @@ describe("SemaphoreVoting", () => {
     const zkeyFilePath = `../../snark-artifacts/${treeDepth}/semaphore.zkey`
 
     before(async () => {
-        const { semaphoreVoting, pairingAddress } = await run("deploy:semaphore-voting", {
+        const { semaphoreVoting, semaphoreVerifierAddress, pairingAddress } = await run("deploy:semaphore-voting", {
             logs: false
         })
 
         semaphoreVotingContract = semaphoreVoting
         pairingContract = await ethers.getContractAt("Pairing", pairingAddress)
+        semaphoreVerifierContract = await ethers.getContractAt("SemaphoreVerifier", semaphoreVerifierAddress);
 
         accounts = await ethers.getSigners()
         coordinator = await accounts[1].getAddress()
@@ -170,7 +173,7 @@ describe("SemaphoreVoting", () => {
                 .connect(accounts[1])
                 .castVote(vote, 0, pollIds[1], fullProof.proof)
 
-            await expect(transaction).to.be.revertedWithCustomError(pairingContract, "InvalidProof")
+            await expect(transaction).to.be.revertedWithCustomError(semaphoreVerifierContract, "PROOF_FAILURE")
         })
 
         it("Should cast a vote", async () => {

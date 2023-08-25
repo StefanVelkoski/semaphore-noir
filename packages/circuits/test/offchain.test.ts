@@ -1,4 +1,3 @@
-import { newBarretenbergApiSync, BarretenbergApiSync } from "@aztec/bb.js/dest/node";
 import { Fr } from "@aztec/bb.js/dest/node/types";
 import { promisify } from "util";
 import { exec } from "child_process";

@@ -20,18 +20,10 @@ interface ISemaphoreVerifier {
     }
 
     /// @dev Verifies whether a Semaphore proof is valid.
-    /// @param merkleTreeRoot: Root of the Merkle tree.
-    /// @param nullifierHash: Nullifier hash.
-    /// @param signal: Semaphore signal.
-    /// @param externalNullifier: External nullifier.
-    /// @param proof: Zero-knowledge proof.
-    /// @param merkleTreeDepth: Depth of the tree.
-    function verifyProof(
-        uint256 merkleTreeRoot,
-        uint256 nullifierHash,
-        uint256 signal,
-        uint256 externalNullifier,
-        uint256[8] calldata proof,
-        uint256 merkleTreeDepth
-    ) external view;
+    /// @param _proof: ZK proof
+    /// @param _publicInputs: [...inputs]
+    function verify(
+        bytes calldata _proof,
+        bytes32[] calldata _publicInputs
+    ) external view returns (bool);
 }

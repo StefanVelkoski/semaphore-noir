@@ -41,6 +41,8 @@
         "@ethersproject/bignumber": "^5.7.0",
         "@ethersproject/bytes": "^5.7.0",
         "@ethersproject/keccak256": "^5.7.0",
-        "@zk-kit/incremental-merkle-tree": "1.1.0"
+        "@zk-kit/incremental-merkle-tree": "1.1.0",
+        "rimraf": "^5.0.1",
+        "rollup": "^3.28.1"
     }
 }

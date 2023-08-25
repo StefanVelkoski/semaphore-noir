@@ -13,11 +13,7 @@ task("deploy:semaphore-voting", "Deploy a SemaphoreVoting contract")
             console.info(`Pairing library has been deployed to: ${pairing.address}`)
         }
 
-        const SemaphoreVerifierFactory = await ethers.getContractFactory("SemaphoreVerifier", {
-            libraries: {
-                Pairing: pairing.address
-            }
-        })
+        const SemaphoreVerifierFactory = await ethers.getContractFactory("SemaphoreVerifier")
 
         const semaphoreVerifier = await SemaphoreVerifierFactory.deploy()
 

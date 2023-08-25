@@ -1,6 +1,6 @@
 import { formatBytes32String } from "@ethersproject/strings"
-// import { Group } from "@semaphore-protocol/group"
-// import { Identity } from "@semaphore-protocol/identity"
+import { Group } from "@semaphore-protocol/group"
+import { Identity } from "@semaphore-protocol/identity"
 // import { getCurveFromName } from "ffjavascript"
 // import calculateNullifierHash from "./calculateNullifierHash"
 // import generateProof from "./generateProof"
@@ -10,16 +10,15 @@ import hash from "./hash"
 // import unpackProof from "./unpackProof"
 // import verifyProof from "./verifyProof"
 
-describe("Proof", () => {
-    // const treeDepth = Number(process.env.TREE_DEPTH) || 20
+describe("Proof", async () => {
+    const treeDepth = Number(process.env.TREE_DEPTH) || 16
 
     const externalNullifier = formatBytes32String("Topic")
     const signal = formatBytes32String("Hello world")
+    const identity = new Identity()
 
     // const wasmFilePath = `./snark-artifacts/${treeDepth}/semaphore.wasm`
     // const zkeyFilePath = `./snark-artifacts/${treeDepth}/semaphore.zkey`
-
-    // const identity = new Identity()
 
     // let fullProof: FullProof
     // let curve: any
@@ -52,14 +51,12 @@ describe("Proof", () => {
         })
 
         it("Should generate a Semaphore proof passing a group as parameter", async () => {
-            // const group = new Group(treeDepth)
-            // group.addMembers([BigInt(1), BigInt(2), identity.commitment])
-            // fullProof = await generateProof(identity, group, externalNullifier, signal, {
-            //     wasmFilePath,
-            //     zkeyFilePath
-            // })
-            // expect(typeof fullProof).toBe("object")
-            // expect(fullProof.merkleTreeRoot).toBe(group.root.toString())
+            const group = new Group(treeDepth)
+            group.addMembers([BigInt(1), BigInt(2), identity.commitment])
+
+            fullProof = await generateProof(identity, group, externalNullifier, signal)
+            expect(typeof fullProof).toBe("object")
+            expect(fullProof.merkleTreeRoot).toBe(group.root.toString())
         }, 20000)
 
         it("Should generate a Semaphore proof passing a Merkle proof as parameter", async () => {
