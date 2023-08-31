@@ -1,21 +1,21 @@
 /* eslint-disable @typescript-eslint/no-shadow */
-/* eslint-disable jest/valid-expect */
 import { Group } from "@semaphore-protocol/group"
 import { Identity } from "@semaphore-protocol/identity"
-import { FullProof, generateProof } from "@semaphore-protocol/proof"
+import { FullProof } from "@semaphore-protocol/proof"
 import { expect } from "chai"
 import { constants, Signer } from "ethers"
 import { ethers, run } from "hardhat"
-import { Pairing, Semaphore } from "../build/typechain"
-import { createIdentityCommitments } from "./utils"
+import { Pairing, Semaphore, SemaphoreVerifier } from "../build/typechain"
+import { createIdentityCommitments, generateProof } from "./utils"
 
 describe("Semaphore", () => {
     let semaphoreContract: Semaphore
     let pairingContract: Pairing
+    let semaphoreVerifierContract: SemaphoreVerifier
     let signers: Signer[]
     let accounts: string[]
 
-    const treeDepth = Number(process.env.TREE_DEPTH) || 20
+    const treeDepth = Number(process.env.TREE_DEPTH) || 16
     const groupId = 1
     const group = new Group(groupId, treeDepth)
     const members = createIdentityCommitments(3)
@@ -24,12 +24,14 @@ describe("Semaphore", () => {
     const zkeyFilePath = `../../snark-artifacts/${treeDepth}/semaphore.zkey`
 
     before(async () => {
-        const { semaphore, pairingAddress } = await run("deploy:semaphore", {
+        const { semaphore, semaphoreVerifierAddress, pairingAddress } = await run("deploy:semaphore", {
             logs: false
         })
 
         semaphoreContract = semaphore
         pairingContract = await ethers.getContractAt("Pairing", pairingAddress)
+        semaphoreVerifierContract = await ethers.getContractAt("SemaphoreVerifier", semaphoreVerifierAddress);
+
 
         signers = await run("accounts", { logs: false })
         accounts = await Promise.all(signers.map((signer: Signer) => signer.getAddress()))
@@ -232,6 +234,7 @@ describe("Semaphore", () => {
     describe("# verifyProof", () => {
         const signal = 2
         const identity = new Identity("0")
+        const dummyProof = [0, 0, 0, 0, 0, 0, 0, 0];
 
         const group = new Group(groupId, treeDepth)
 
@@ -249,13 +252,13 @@ describe("Semaphore", () => {
         })
 
         it("Should not verify a proof if the group does not exist", async () => {
-            const transaction = semaphoreContract.verifyProof(10, 1, signal, 0, 0, [0, 0, 0, 0, 0, 0, 0, 0])
+            const transaction = semaphoreContract.verifyProof(10, 1, signal, 0, 0, dummyProof)
 
             await expect(transaction).to.be.revertedWithCustomError(semaphoreContract, "Semaphore__GroupDoesNotExist")
         })
 
         it("Should not verify a proof if the Merkle tree root is not part of the group", async () => {
-            const transaction = semaphoreContract.verifyProof(2, 1, signal, 0, 0, [0, 0, 0, 0, 0, 0, 0, 0])
+            const transaction = semaphoreContract.verifyProof(2, 1, signal, 0, 0, dummyProof)
 
             await expect(transaction).to.be.revertedWithCustomError(
                 semaphoreContract,
@@ -273,7 +276,7 @@ describe("Semaphore", () => {
                 fullProof.proof
             )
 
-            await expect(transaction).to.be.revertedWithCustomError(pairingContract, "InvalidProof")
+            await expect(transaction).to.be.revertedWithCustomError(semaphoreVerifierContract, "PROOF_FAILURE")
         })
 
         it("Should verify a proof for an onchain group correctly", async () => {

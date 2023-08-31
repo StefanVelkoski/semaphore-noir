@@ -3,8 +3,6 @@
 // Copyright 2022 Aztec
 pragma solidity >=0.8.4;
 
-import { ISemaphoreVerifier } from "./../interfaces/ISemaphoreVerifier.sol";
-
 library UltraVerificationKey {
     function verificationKeyHash() internal pure returns(bytes32) {
         return 0xbf0b3acc4df14cb1210e6fe4f758d96db70a1bfa6c49fe5b08e20e7e9dd108b7;
@@ -64,10 +62,10 @@ library UltraVerificationKey {
             mstore(add(_vk, 0x620), 0x1634d68293e7bd7c73c884c9fdaedd01e89aa8d9049ef2c771aa989acbd9b1f8) // vk.ID4.y
             mstore(add(_vk, 0x640), 0x00) // vk.contains_recursive_proof
             mstore(add(_vk, 0x660), 0) // vk.recursive_proof_public_input_indices
-            mstore(add(_vk, 0x680), 0x260e01b251f6f1c7e7ff4e580791dee8ea51d87a358e038b4efe30fac09383c1) // vk.g2_x.X.c1
-            mstore(add(_vk, 0x6a0), 0x0118c4d5b837bcc2bc89b5b398b5974e9f5944073b32078b7e231fec938883b0) // vk.g2_x.X.c0
-            mstore(add(_vk, 0x6c0), 0x04fc6369f7110fe3d25156c1bb9a72859cf2a04641f99ba4ee413c80da6a5fe4) // vk.g2_x.Y.c1
-            mstore(add(_vk, 0x6e0), 0x22febda3c0c0632a56475b4214e5615e11e6dd3f96e6cea2854a87d4dacc5e55) // vk.g2_x.Y.c0
+            mstore(add(_vk, 0x680), 0x260e01b251f6f1c7e7ff4e580791dee8ea51d87a358e038b4efe30fac09383c1) // vk.g2_x.X.c1 
+            mstore(add(_vk, 0x6a0), 0x0118c4d5b837bcc2bc89b5b398b5974e9f5944073b32078b7e231fec938883b0) // vk.g2_x.X.c0 
+            mstore(add(_vk, 0x6c0), 0x04fc6369f7110fe3d25156c1bb9a72859cf2a04641f99ba4ee413c80da6a5fe4) // vk.g2_x.Y.c1 
+            mstore(add(_vk, 0x6e0), 0x22febda3c0c0632a56475b4214e5615e11e6dd3f96e6cea2854a87d4dacc5e55) // vk.g2_x.Y.c0 
             mstore(_omegaInverseLoc, 0x0b5d56b77fe704e8e92338c0082f37e091126414c830e4c6922d5ac802d842d4) // vk.work_root_inverse
         }
     }
@@ -77,7 +75,7 @@ library UltraVerificationKey {
  * @title Ultra Plonk proof verification contract
  * @dev Top level Plonk proof verification contract, which allows Plonk proof to be verified
  */
-abstract contract BaseUltraVerifier is ISemaphoreVerifier {
+abstract contract BaseUltraVerifier {
     // VERIFICATION KEY MEMORY LOCATIONS
     uint256 internal constant N_LOC = 0x380;
     uint256 internal constant NUM_INPUTS_LOC = 0x3a0;
@@ -373,7 +371,7 @@ abstract contract BaseUltraVerifier is ISemaphoreVerifier {
      * @param _publicInputs - An array of the public inputs
      * @return True if proof is valid, reverts otherwise
      */
-    function verify(bytes calldata _proof, bytes32[] calldata _publicInputs) external override view returns (bool) {
+    function verify(bytes calldata _proof, bytes32[] calldata _publicInputs) external view returns (bool) {
         loadVerificationKey(N_LOC, OMEGA_INVERSE_LOC);
 
         uint256 requiredPublicInputCount;
@@ -2602,7 +2600,7 @@ abstract contract BaseUltraVerifier is ISemaphoreVerifier {
     }
 }
 
-contract SemaphoreVerifier is BaseUltraVerifier {
+contract UltraVerifier is BaseUltraVerifier {
     function getVerificationKeyHash() public pure override(BaseUltraVerifier) returns (bytes32) {
         return UltraVerificationKey.verificationKeyHash();
     }

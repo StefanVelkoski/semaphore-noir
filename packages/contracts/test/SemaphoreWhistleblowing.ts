@@ -1,31 +1,33 @@
-/* eslint-disable jest/valid-expect */
 import { Group } from "@semaphore-protocol/group"
 import { Identity } from "@semaphore-protocol/identity"
-import { FullProof, generateProof } from "@semaphore-protocol/proof"
+import { FullProof } from "@semaphore-protocol/proof"
 import { expect } from "chai"
 import { Signer, utils } from "ethers"
 import { ethers, run } from "hardhat"
 import { Pairing, SemaphoreWhistleblowing } from "../build/typechain"
+import { generateProof } from "./utils"
 
 describe("SemaphoreWhistleblowing", () => {
     let semaphoreWhistleblowingContract: SemaphoreWhistleblowing
     let pairingContract: Pairing
+    let semaphoreVerifierContract: SemaphoreVerifier
     let accounts: Signer[]
     let editor: string
 
-    const treeDepth = Number(process.env.TREE_DEPTH) || 20
+    const treeDepth = Number(process.env.TREE_DEPTH) || 16
     const entityIds = [1, 2]
 
     const wasmFilePath = `../../snark-artifacts/${treeDepth}/semaphore.wasm`
     const zkeyFilePath = `../../snark-artifacts/${treeDepth}/semaphore.zkey`
 
     before(async () => {
-        const { semaphoreWhistleblowing, pairingAddress } = await run("deploy:semaphore-whistleblowing", {
+        const { semaphoreWhistleblowing, semaphoreVerifierAddress, pairingAddress } = await run("deploy:semaphore-whistleblowing", {
             logs: false
         })
 
         semaphoreWhistleblowingContract = semaphoreWhistleblowing
         pairingContract = await ethers.getContractAt("Pairing", pairingAddress)
+        semaphoreVerifierContract = await ethers.getContractAt("SemaphoreVerifier", semaphoreVerifierAddress);
 
         accounts = await ethers.getSigners()
         editor = await accounts[1].getAddress()
@@ -137,7 +139,10 @@ describe("SemaphoreWhistleblowing", () => {
 
     describe("# publishLeak", () => {
         const identity = new Identity("test")
-        const leak = utils.formatBytes32String("This is a leak")
+
+        // INFO: proof package will support sane leak serialization
+        // const leak = utils.formatBytes32String("This is a leak")
+        const leak = BigInt(42)
 
         const group = new Group(entityIds[1], treeDepth)
 
@@ -163,7 +168,7 @@ describe("SemaphoreWhistleblowing", () => {
                 .connect(accounts[1])
                 .publishLeak(leak, 0, entityIds[1], fullProof.proof)
 
-            await expect(transaction).to.be.revertedWithCustomError(pairingContract, "InvalidProof")
+            await expect(transaction).to.be.revertedWithCustomError(semaphoreVerifierContract, "PROOF_FAILURE")
         })
 
         it("Should publish a leak", async () => {

@@ -1,4 +1,3 @@
-import { groth16 } from "snarkjs"
 import hash from "./hash"
 import { FullProof } from "./types"
 import unpackProof from "./unpackProof"
@@ -17,16 +16,10 @@ export default function verifyProof(
     if (treeDepth < 16 || treeDepth > 32) {
         throw new TypeError("The tree depth must be a number between 16 and 32")
     }
-
-    const verificationKey = {
-        ...verificationKeys,
-        vk_delta_2: verificationKeys.vk_delta_2[treeDepth - 16],
-        IC: verificationKeys.IC[treeDepth - 16]
-    }
-
-    return groth16.verify(
-        verificationKey,
-        [merkleTreeRoot, nullifierHash, hash(signal), hash(externalNullifier)],
-        unpackProof(proof)
-    )
+    return new Promise(() => false)
+    // return groth16.verify(
+    //     verificationKey,
+    //     [merkleTreeRoot, nullifierHash, hash(signal), hash(externalNullifier)],
+    //     unpackProof(proof)
+    // )
 }

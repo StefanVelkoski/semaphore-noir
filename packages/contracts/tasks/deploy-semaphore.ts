@@ -38,11 +38,7 @@ task("deploy:semaphore", "Deploy a Semaphore contract")
                     pairingAddress = pairing.address
                 }
 
-                const SemaphoreVerifierFactory = await ethers.getContractFactory("SemaphoreVerifier", {
-                    libraries: {
-                        Pairing: pairingAddress
-                    }
-                })
+                const SemaphoreVerifierFactory = await ethers.getContractFactory("SemaphoreVerifier")
 
                 const semaphoreVerifier = await SemaphoreVerifierFactory.deploy()
 

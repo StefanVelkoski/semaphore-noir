@@ -21,13 +21,4 @@ export type FullProof = {
     proof: Proof
 }
 
-export type Proof = [
-    BigNumberish,
-    BigNumberish,
-    BigNumberish,
-    BigNumberish,
-    BigNumberish,
-    BigNumberish,
-    BigNumberish,
-    BigNumberish
-]
+export type Proof = any

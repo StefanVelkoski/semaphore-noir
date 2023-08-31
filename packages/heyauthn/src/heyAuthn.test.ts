@@ -6,7 +6,7 @@ import {
 
 import HeyAuthn from "./heyAuthn"
 
-jest.mock("@simplewebauthn/browser", () => ({
+vi.mock("@simplewebauthn/browser", () => ({
     startRegistration: async () => ({
         id: "my-new-credential",
         rawId: "my-new-credential",

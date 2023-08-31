@@ -1,12 +1,12 @@
 import request from "./request"
 import SemaphoreSubgraph from "./subgraph"
 
-jest.mock("./request", () => ({
+vi.mock("./request", () => ({
     __esModule: true,
-    default: jest.fn()
+    default: vi.fn()
 }))
 
-const requestMocked = request as jest.MockedFunction<typeof request>
+const requestMocked = request as vi.MockedFunction<typeof request>
 
 describe("SemaphoreSubgraph", () => {
     let semaphore: SemaphoreSubgraph

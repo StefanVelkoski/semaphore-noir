@@ -59,7 +59,17 @@ function getNetworks(): NetworksUserConfig {
 }
 
 const hardhatConfig: HardhatUserConfig = {
-    solidity: config.solidity,
+    // solidity: config.solidity,
+    solidity: {
+        version: "0.8.4",
+        settings: {
+            optimizer: {
+                enabled: true,
+                runs: 100_000,
+            },
+            viaIR: false,
+        },
+    },
     paths: {
         sources: config.paths.contracts,
         tests: config.paths.tests,
@@ -84,6 +94,9 @@ const hardhatConfig: HardhatUserConfig = {
     },
     etherscan: {
         apiKey: process.env.ETHERSCAN_API_KEY
+    },
+    mocha: {
+        timeout: 100_000_000_000
     }
 }
 

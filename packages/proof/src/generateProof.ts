@@ -3,10 +3,11 @@ import { BytesLike, Hexable } from "@ethersproject/bytes"
 import { Group } from "@semaphore-protocol/group"
 import type { Identity } from "@semaphore-protocol/identity"
 import { MerkleProof } from "@zk-kit/incremental-merkle-tree"
-import { groth16 } from "snarkjs"
 import hash from "./hash"
 import packProof from "./packProof"
 import { FullProof, SnarkArtifacts } from "./types"
+import { newBarretenbergApiSync, Crs} from '@aztec/bb.js'
+import { readFileSync } from 'fs';
 
 /**
  * Generates a Semaphore proof.
@@ -22,7 +23,6 @@ export default async function generateProof(
     groupOrMerkleProof: Group | MerkleProof,
     externalNullifier: BytesLike | Hexable | number | bigint,
     signal: BytesLike | Hexable | number | bigint,
-    snarkArtifacts?: SnarkArtifacts
 ): Promise<FullProof> {
     let merkleProof: MerkleProof
 
@@ -38,31 +38,28 @@ export default async function generateProof(
         merkleProof = groupOrMerkleProof
     }
 
-    if (!snarkArtifacts) {
-        snarkArtifacts = {
-            wasmFilePath: `https://www.trusted-setup-pse.org/semaphore/${merkleProof.siblings.length}/semaphore.wasm`,
-            zkeyFilePath: `https://www.trusted-setup-pse.org/semaphore/${merkleProof.siblings.length}/semaphore.zkey`
-        }
-    }
+    // const api = await newBarretenbergApiSync();
+    // const acirComposer = await api.acirNewAcirComposer(0);
 
-    const { proof, publicSignals } = await groth16.fullProve(
-        {
-            identityTrapdoor: trapdoor,
-            identityNullifier: nullifier,
-            treePathIndices: merkleProof.pathIndices,
-            treeSiblings: merkleProof.siblings,
-            externalNullifier: hash(externalNullifier),
-            signalHash: hash(signal)
-        },
-        snarkArtifacts.wasmFilePath,
-        snarkArtifacts.zkeyFilePath
-    )
+    // const target = JSON.parse(readFileSync('./target/circuits.json'))
+
+    // console.log({ b: target.bytecode })
+    // console.log({ w: target.witness })
 
     return {
-        merkleTreeRoot: publicSignals[0],
-        nullifierHash: publicSignals[1],
-        signal: BigNumber.from(signal).toString(),
-        externalNullifier: BigNumber.from(externalNullifier).toString(),
-        proof: packProof(proof)
+        merkleTreeRoot: BigInt(0),
+        nullifierHash: BigInt(0),
+        signal: BigInt(0),
+        externalNullifier: BigInt(0),
+        proof: undefined
     }
+
+
+    // return {
+    //     merkleTreeRoot: publicSignals[0],
+    //     nullifierHash: publicSignals[1],
+    //     signal: BigNumber.from(signal).toString(),
+    //     externalNullifier: BigNumber.from(externalNullifier).toString(),
+    //     proof: packProof(proof)
+    // }
 }

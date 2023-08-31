@@ -3,9 +3,9 @@
     "version": "3.11.0",
     "description": "A library to create and manage Semaphore groups.",
     "license": "MIT",
-    "main": "dist/index.node.js",
+    "main": "./src/index.ts",
     "exports": {
-        "import": "./dist/index.mjs",
+        "import": "./src/index.ts",
         "require": "./dist/index.node.js"
     },
     "types": "dist/types/index.d.ts",
@@ -41,6 +41,8 @@
         "@ethersproject/bignumber": "^5.7.0",
         "@ethersproject/bytes": "^5.7.0",
         "@ethersproject/keccak256": "^5.7.0",
-        "@zk-kit/incremental-merkle-tree": "1.1.0"
+        "@zk-kit/incremental-merkle-tree": "1.1.0",
+        "rimraf": "^5.0.1",
+        "rollup": "^3.28.1"
     }
 }
