@@ -1,7 +1,11 @@
-import hash from "./hash"
+import { BarretenbergBackend } from '@signorecello/backend_barretenberg';
+import { Noir } from '@noir-lang/noir_js';
+import { CompiledCircuit, ProofData } from "@noir-lang/types"
 import { FullProof } from "./types"
-import unpackProof from "./unpackProof"
-import verificationKeys from "./verificationKeys.json"
+import { Barretenberg, Fr } from '@aztec/bb.js';
+
+// eslint-disable-next-line import/no-relative-packages
+import circuit from '../target/circuits.json'
 
 /**
  * Verifies a Semaphore proof.
@@ -9,17 +13,22 @@ import verificationKeys from "./verificationKeys.json"
  * @param treeDepth The Merkle tree depth.
  * @returns True if the proof is valid, false otherwise.
  */
-export default function verifyProof(
+export default async function verifyProof(
     { merkleTreeRoot, nullifierHash, externalNullifier, signal, proof }: FullProof,
     treeDepth: number
 ): Promise<boolean> {
+
+    const backend = new BarretenbergBackend(circuit as unknown as CompiledCircuit);
+    const noir = new Noir(circuit as unknown as CompiledCircuit, backend);
+
+    
     if (treeDepth < 16 || treeDepth > 32) {
         throw new TypeError("The tree depth must be a number between 16 and 32")
     }
-    return new Promise(() => false)
-    // return groth16.verify(
-    //     verificationKey,
-    //     [merkleTreeRoot, nullifierHash, hash(signal), hash(externalNullifier)],
-    //     unpackProof(proof)
-    // )
+
+    const verified = await noir.verifyFinalProof(proof);
+
+    // expect to be true
+    return verified;
+
 }

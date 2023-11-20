@@ -1,89 +1,83 @@
 import { formatBytes32String } from "@ethersproject/strings"
-// import { Group } from "@semaphore-protocol/group"
-// import { Identity } from "@semaphore-protocol/identity"
-// import { getCurveFromName } from "ffjavascript"
-// import calculateNullifierHash from "./calculateNullifierHash"
-// import generateProof from "./generateProof"
+import { expect } from "chai"
+import { Group } from "@semaphore-protocol/group"
+import { Identity } from "@semaphore-protocol/identity"
+
+import calculateNullifierHash from "./calculateNullifierHash"
+import generateProof from "./generateProof"
+import verifyProof from "./verifyProof"
 import hash from "./hash"
-// import packProof from "./packProof"
-// import { FullProof } from "./types"
-// import unpackProof from "./unpackProof"
-// import verifyProof from "./verifyProof"
+import { FullProof } from "./types"
 
 describe("Proof", () => {
-    // const treeDepth = Number(process.env.TREE_DEPTH) || 20
-
     const externalNullifier = formatBytes32String("Topic")
     const signal = formatBytes32String("Hello world")
 
-    // const wasmFilePath = `./snark-artifacts/${treeDepth}/semaphore.wasm`
-    // const zkeyFilePath = `./snark-artifacts/${treeDepth}/semaphore.zkey`
-
-    // const identity = new Identity()
-
-    // let fullProof: FullProof
+    let fullProof: FullProof
     // let curve: any
 
-    // beforeAll(async () => {
-    //     curve = await getCurveFromName("bn128")
-    // })
-
-    // afterAll(async () => {
-    //     await curve.terminate()
-    // })
-
     describe("# generateProof", () => {
-        it("Should not generate Semaphore proofs if the identity is not part of the group", async () => {
-            // const group = new Group(treeDepth)
-            // group.addMembers([BigInt(1), BigInt(2)])
-            // const fun = () =>
-            //     generateProof(identity, group, externalNullifier, signal, {
-            //         wasmFilePath,
-            //         zkeyFilePath
-            //     })
-            // await expect(fun).rejects.toThrow("The identity is not part of the group")
-        })
+        it('Should not generate Semaphore proofs if the identity is not part of the group', async () => {
+          const group = new Group(1, 16);
+          const identity = new Identity('message2');
 
-        it("Should not generate a Semaphore proof with default snark artifacts with Node.js", async () => {
-            // const group = new Group(treeDepth)
-            // group.addMembers([BigInt(1), BigInt(2), identity.commitment])
-            // const fun = () => generateProof(identity, group, externalNullifier, signal)
-            // await expect(fun).rejects.toThrow("ENOENT: no such file or directory")
-        })
+          const fun = async () => generateProof(identity, group, externalNullifier, signal);
+
+          try {
+            await fun();
+            throw new Error('Expected the promise to be rejected');
+          } catch (error) {
+            expect(error.message).toBe('The identity is not part of the group');
+          }
+        }, 200000);
 
         it("Should generate a Semaphore proof passing a group as parameter", async () => {
-            // const group = new Group(treeDepth)
-            // group.addMembers([BigInt(1), BigInt(2), identity.commitment])
-            // fullProof = await generateProof(identity, group, externalNullifier, signal, {
-            //     wasmFilePath,
-            //     zkeyFilePath
-            // })
-            // expect(typeof fullProof).toBe("object")
-            // expect(fullProof.merkleTreeRoot).toBe(group.root.toString())
-        }, 20000)
+            const group = new Group(1, 16)
+            const identity = new Identity("message2")
+
+            group.addMember(identity.getCommitment())
+
+            fullProof = await generateProof(identity, group, externalNullifier, signal)
+
+            console.log('fullProof', fullProof)
+            
+        }, 200000)
 
         it("Should generate a Semaphore proof passing a Merkle proof as parameter", async () => {
-            // const group = new Group(treeDepth)
-            // group.addMembers([BigInt(1), BigInt(2), identity.commitment])
-            // fullProof = await generateProof(identity, group.generateMerkleProof(2), externalNullifier, signal, {
-            //     wasmFilePath,
-            //     zkeyFilePath
-            // })
-            // expect(typeof fullProof).toBe("object")
-            // expect(fullProof.merkleTreeRoot).toBe(group.root.toString())
-        }, 20000)
+            const group = new Group(1, 16)
+            const identity = new Identity("message2")
+            const identity2 = new Identity("message3")
+
+
+            group.addMember(identity.getCommitment())
+            group.addMember(identity2.getCommitment())
+
+            const merkleProof = group.generateMerkleProof(group.indexOf(identity.getCommitment()))
+
+            fullProof = await generateProof(identity, merkleProof, externalNullifier, signal)
+
+        }, 400000)
     })
 
     describe("# verifyProof", () => {
-        it("Should not verify a proof if the tree depth is wrong", () => {
-            // const fun = () => verifyProof(fullProof, 3)
-            // expect(fun).toThrow("The tree depth must be a number between 16 and 32")
-        })
+
+        it('Should not verify a proof if the tree depth is wrong', async () => {
+          const fun = () => verifyProof(fullProof, 3);
+
+          try {
+            await fun();
+            throw new Error('Expected the promise to be rejected');
+          } catch (error) {
+            expect(error.message).toBe('The tree depth must be a number between 16 and 32');
+          }
+        }, 200000);
 
         it("Should verify a Semaphore proof", async () => {
-            // const response = await verifyProof(fullProof, treeDepth)
-            // expect(response).toBe(true)
-        })
+
+            const response = await verifyProof(fullProof, 16)
+            // eslint-disable-next-line @typescript-eslint/no-unused-expressions
+            expect(response).to.be.true;
+        }, 200000)
     })
 
     describe("# hash", () => {
@@ -134,18 +128,6 @@ describe("Proof", () => {
         })
     })
 
-    describe("# calculateNullifierHash", () => {
-        it("Should calculate the nullifier hash correctly", async () => {
-            // const nullifierHash = calculateNullifierHash(identity.nullifier, externalNullifier)
-            // expect(fullProof.nullifierHash).toBe(nullifierHash.toString())
-        })
-    })
 
-    describe("# packProof/unpackProof", () => {
-        it("Should return a packed proof", async () => {
-            // const originalProof = unpackProof(fullProof.proof)
-            // const proof = packProof(originalProof)
-            // expect(proof).toStrictEqual(fullProof.proof)
-        })
-    })
+
 })

@@ -1,7 +1,7 @@
 {
-    "name": "@semaphore-protocol/proof",
-    "version": "3.11.0",
-    "description": "A library to generate and verify Semaphore proofs.",
+    "name": "@semaphore-noir/proof",
+    "version": "0.0.1",
+    "description": "A library to generate and verify Semaphore proofs with Aztec's noir.",
     "license": "MIT",
     "main": "dist/index.node.js",
     "exports": {
@@ -16,14 +16,11 @@
         "README.md"
     ],
     "repository": "https://github.com/semaphore-protocol/semaphore",
-    "homepage": "https://github.com/semaphore-protocol/semaphore/tree/main/packages/proof",
-    "bugs": {
-        "url": "https://github.com/semaphore-protocol/semaphore.git/issues"
-    },
     "scripts": {
         "build:watch": "rollup -c rollup.config.ts -w --configPlugin typescript",
         "build": "rimraf dist && rollup -c rollup.config.ts --configPlugin typescript",
         "test": "yarn vitest",
+        "test:index": "yarn hardhat test ./src/index.test.ts",
         "prepublishOnly": "yarn build",
         "docs": "typedoc src/index.ts --out ../../docs/proof"
     },
@@ -46,11 +43,15 @@
         "@semaphore-protocol/identity": "3.11.0"
     },
     "dependencies": {
-        "@aztec/bb.js": "^0.4.2",
+        "@aztec/bb.js": "^0.8.14",
         "@ethersproject/bignumber": "^5.5.0",
         "@ethersproject/bytes": "^5.7.0",
         "@ethersproject/keccak256": "^5.7.0",
         "@ethersproject/strings": "^5.5.0",
+        "@noir-lang/backend_barretenberg": "0.18.0",
+        "@noir-lang/noir_js": "0.18.0",
+        "@noir-lang/types": "0.18.0",
+        "@signorecello/backend_barretenberg": "^0.19.6",
         "@zk-kit/incremental-merkle-tree": "0.4.3",
         "rimraf": "^5.0.1",
         "rollup": "^3.28.1",
