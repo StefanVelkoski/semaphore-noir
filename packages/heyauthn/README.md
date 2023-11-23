@@ -98,7 +98,7 @@ const { identity } = await HeyAuthn.fromRegister(options)
 
 // Get existing group and signal anonymously (pseudocode).
 import { Group } from "@semaphore-protocol/group"
-import { generateProof } from "@semaphore-protocol/proof"
+import { generateProof } from "@semaphore-noir/proof"
 import { utils } from "ethers"
 
 const group = new Group("42")

@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-shadow */
 import { Group } from "@semaphore-protocol/group"
 import { Identity } from "@semaphore-protocol/identity"
-import { FullProof } from "@semaphore-protocol/proof"
+import { FullProof } from "@semaphore-noir/proof"
 import { expect } from "chai"
 import { constants, Signer } from "ethers"
 import { ethers, run } from "hardhat"

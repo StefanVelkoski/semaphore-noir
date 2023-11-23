@@ -3771,6 +3771,37 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@semaphore-noir/proof@workspace:packages/proof":
+  version: 0.0.0-use.local
+  resolution: "@semaphore-noir/proof@workspace:packages/proof"
+  dependencies:
+    "@aztec/bb.js": ^0.8.14
+    "@ethersproject/bignumber": ^5.5.0
+    "@ethersproject/bytes": ^5.7.0
+    "@ethersproject/keccak256": ^5.7.0
+    "@ethersproject/strings": ^5.5.0
+    "@noir-lang/backend_barretenberg": 0.18.0
+    "@noir-lang/noir_js": 0.18.0
+    "@noir-lang/types": 0.18.0
+    "@rollup/plugin-commonjs": ^24.1.0
+    "@rollup/plugin-json": ^5.0.1
+    "@rollup/plugin-node-resolve": ^15.0.2
+    "@semaphore-protocol/group": 3.11.0
+    "@semaphore-protocol/identity": 3.11.0
+    "@signorecello/backend_barretenberg": ^0.19.6
+    "@zk-kit/incremental-merkle-tree": 0.4.3
+    ffjavascript: ^0.2.54
+    poseidon-lite: ^0.2.0
+    rimraf: ^5.0.1
+    rollup: ^3.28.1
+    rollup-plugin-cleanup: ^3.2.1
+    rollup-plugin-typescript2: ^0.31.2
+    snarkjs: 0.4.16
+    typedoc: ^0.22.11
+    vitest: ^0.34.2
+  languageName: unknown
+  linkType: soft
+
 "@semaphore-protocol/cli-template-contracts-hardhat@workspace:packages/cli-template-contracts-hardhat":
   version: 0.0.0-use.local
   resolution: "@semaphore-protocol/cli-template-contracts-hardhat@workspace:packages/cli-template-contracts-hardhat"
@@ -3782,11 +3813,11 @@ __metadata:
     "@nomicfoundation/hardhat-toolbox": ^2.0.0
     "@nomiclabs/hardhat-ethers": ^2.0.0
     "@nomiclabs/hardhat-etherscan": ^3.0.0
+    "@semaphore-noir/proof": "workspace:packages/proof"
     "@semaphore-protocol/contracts": 3.11.0
     "@semaphore-protocol/group": 3.11.0
     "@semaphore-protocol/hardhat": 3.11.0
     "@semaphore-protocol/identity": 3.11.0
-    "@semaphore-protocol/proof": 3.11.0
     "@typechain/ethers-v5": ^10.1.0
     "@typechain/hardhat": ^6.1.2
     "@types/chai": ^4.2.0
@@ -3961,54 +3992,6 @@ __metadata:
     rollup-plugin-cleanup: ^3.2.1
     rollup-plugin-typescript2: ^0.31.2
     typedoc: ^0.22.11
-  languageName: unknown
-  linkType: soft
-
-"@semaphore-protocol/proof@npm:3.11.0":
-  version: 3.11.0
-  resolution: "@semaphore-protocol/proof@npm:3.11.0"
-  dependencies:
-    "@ethersproject/bignumber": ^5.5.0
-    "@ethersproject/bytes": ^5.7.0
-    "@ethersproject/keccak256": ^5.7.0
-    "@ethersproject/strings": ^5.5.0
-    "@zk-kit/incremental-merkle-tree": 0.4.3
-    snarkjs: 0.4.16
-  peerDependencies:
-    "@semaphore-protocol/group": 3.11.0
-    "@semaphore-protocol/identity": 3.11.0
-  checksum: dae1c04cf6d01325986cb45e2de4202bb2c50050dfa2d95ea0f7553f75111c793e718e8f09fd03ae1c8c74a0313bbb1460e966d8b6e594d826445f5f6c24aa6d
-  languageName: node
-  linkType: hard
-
-"@semaphore-protocol/proof@workspace:packages/proof":
-  version: 0.0.0-use.local
-  resolution: "@semaphore-protocol/proof@workspace:packages/proof"
-  dependencies:
-    "@aztec/bb.js": ^0.8.14
-    "@ethersproject/bignumber": ^5.5.0
-    "@ethersproject/bytes": ^5.7.0
-    "@ethersproject/keccak256": ^5.7.0
-    "@ethersproject/strings": ^5.5.0
-    "@noir-lang/backend_barretenberg": 0.18.0
-    "@noir-lang/noir_js": 0.18.0
-    "@noir-lang/types": 0.18.0
-    "@rollup/plugin-commonjs": ^24.1.0
-    "@rollup/plugin-json": ^5.0.1
-    "@rollup/plugin-node-resolve": ^15.0.2
-    "@semaphore-protocol/group": 3.11.0
-    "@semaphore-protocol/identity": 3.11.0
-    "@signorecello/backend_barretenberg": ^0.19.6
-    "@zk-kit/incremental-merkle-tree": 0.4.3
-    ffjavascript: ^0.2.54
-    poseidon-lite: ^0.2.0
-    rimraf: ^5.0.1
-    rollup: ^3.28.1
-    rollup-plugin-cleanup: ^3.2.1
-    rollup-plugin-typescript2: ^0.31.2
-    snarkjs: 0.4.16
-    typedoc: ^0.22.11
-    vitest: ^0.34.2
   languageName: unknown
   linkType: soft
 
@@ -6772,9 +6755,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"changelogithub@patch:changelogithub@npm:0.12.7#.yarn/patches/changelogithub-npm-0.12.7-72f348805d.patch::locator=semaphore-protocol%40workspace%3A.":
+"changelogithub@patch:changelogithub@npm:0.12.7#.yarn/patches/changelogithub-npm-0.12.7-72f348805d.patch::locator=root-workspace-0b6124%40workspace%3A.":
   version: 0.12.7
-  resolution: "changelogithub@patch:changelogithub@npm%3A0.12.7#.yarn/patches/changelogithub-npm-0.12.7-72f348805d.patch::version=0.12.7&hash=5c03e5&locator=semaphore-protocol%40workspace%3A."
+  resolution: "changelogithub@patch:changelogithub@npm%3A0.12.7#.yarn/patches/changelogithub-npm-0.12.7-72f348805d.patch::version=0.12.7&hash=5c03e5&locator=root-workspace-0b6124%40workspace%3A."
   dependencies:
     "@antfu/utils": ^0.7.2
     c12: ^1.1.0
@@ -7355,9 +7338,9 @@ __metadata:
     "@nomiclabs/hardhat-ethers": ^2.0.6
     "@nomiclabs/hardhat-etherscan": ^3.1.7
     "@openzeppelin/contracts": 4.7.3
+    "@semaphore-noir/proof": "workspace:packages/proof"
     "@semaphore-protocol/group": "workspace:packages/group"
     "@semaphore-protocol/identity": "workspace:packages/identity"
-    "@semaphore-protocol/proof": "workspace:packages/proof"
     "@typechain/ethers-v5": ^10.0.0
     "@typechain/hardhat": ^6.0.0
     "@types/chai": ^4.3.0
@@ -13100,11 +13083,11 @@ __metadata:
     "@nomicfoundation/hardhat-chai-matchers": ^1.0.5
     "@nomiclabs/hardhat-ethers": ^2.0.0
     "@nomiclabs/hardhat-etherscan": ^3.1.7
+    "@semaphore-noir/proof": "workspace:packages/proof"
     "@semaphore-protocol/contracts": 3.11.0
     "@semaphore-protocol/group": 3.11.0
     "@semaphore-protocol/hardhat": 3.11.0
     "@semaphore-protocol/identity": 3.11.0
-    "@semaphore-protocol/proof": 3.11.0
     "@typechain/ethers-v5": ^10.0.0
     "@typechain/hardhat": ^6.0.0
     "@types/chai": ^4.3.1
@@ -13129,10 +13112,10 @@ __metadata:
   resolution: "monorepo-ethers-web-app@workspace:packages/cli-template-monorepo-ethers/apps/web-app"
   dependencies:
     "@next/font": 13.0.3
+    "@semaphore-noir/proof": "workspace:packages/proof"
     "@semaphore-protocol/data": 3.11.0
     "@semaphore-protocol/group": 3.11.0
     "@semaphore-protocol/identity": 3.11.0
-    "@semaphore-protocol/proof": 3.11.0
     "@types/react": 18.0.25
     "@types/react-dom": 18.0.8
     dotenv: ^16.0.3
@@ -13152,11 +13135,11 @@ __metadata:
     "@nomicfoundation/hardhat-chai-matchers": ^1.0.5
     "@nomiclabs/hardhat-ethers": ^2.0.0
     "@nomiclabs/hardhat-etherscan": ^3.1.7
+    "@semaphore-noir/proof": "workspace:packages/proof"
     "@semaphore-protocol/contracts": 3.11.0
     "@semaphore-protocol/group": 3.11.0
     "@semaphore-protocol/hardhat": 3.11.0
     "@semaphore-protocol/identity": 3.11.0
-    "@semaphore-protocol/proof": 3.11.0
     "@typechain/ethers-v5": ^10.0.0
     "@typechain/hardhat": ^6.0.0
     "@types/chai": ^4.3.1
@@ -13181,10 +13164,10 @@ __metadata:
   resolution: "monorepo-subgraph-web-app@workspace:packages/cli-template-monorepo-subgraph/apps/web-app"
   dependencies:
     "@next/font": 13.0.3
+    "@semaphore-noir/proof": "workspace:packages/proof"
     "@semaphore-protocol/data": 3.11.0
     "@semaphore-protocol/group": 3.11.0
     "@semaphore-protocol/identity": 3.11.0
-    "@semaphore-protocol/proof": 3.11.0
     "@types/react": 18.0.25
     "@types/react-dom": 18.0.8
     dotenv: ^16.0.3
@@ -15545,6 +15528,44 @@ __metadata:
   languageName: node
   linkType: hard
 
+"root-workspace-0b6124@workspace:.":
+  version: 0.0.0-use.local
+  resolution: "root-workspace-0b6124@workspace:."
+  dependencies:
+    "@babel/core": ^7.16.7
+    "@babel/preset-env": ^7.16.8
+    "@babel/preset-typescript": ^7.17.12
+    "@commitlint/cli": ^16.0.2
+    "@commitlint/config-conventional": ^16.0.0
+    "@rollup/plugin-typescript": ^8.3.0
+    "@types/download": ^8.0.1
+    "@types/glob": ^7.2.0
+    "@types/node": ^17.0.9
+    "@types/rimraf": ^3.0.2
+    "@typescript-eslint/eslint-plugin": ^5.9.1
+    "@typescript-eslint/parser": ^5.9.1
+    "@vitest/coverage-v8": ^0.34.2
+    changelogithub: 0.12.7
+    commitizen: ^4.2.4
+    cz-conventional-changelog: ^3.3.0
+    dotenv: ^16.0.2
+    eslint: ^8.2.0
+    eslint-config-airbnb-base: 15.0.0
+    eslint-config-airbnb-typescript: ^16.1.0
+    eslint-config-prettier: ^8.3.0
+    eslint-plugin-import: ^2.25.2
+    husky: ^8.0.3
+    lint-staged: ^12.1.7
+    prettier: ^2.5.1
+    rimraf: ^5.0.1
+    rollup: ^2.64.0
+    ts-node: ^10.4.0
+    tslib: ^2.3.1
+    typescript: ^4.7.0
+    vitest: ^0.34.2
+  languageName: unknown
+  linkType: soft
+
 "run-async@npm:^2.4.0":
   version: 2.4.1
   resolution: "run-async@npm:2.4.1"
@@ -15736,44 +15757,6 @@ __metadata:
   checksum: c2ab3291e7085558499efd4e99d1466ee6782f6c4a4e4c417aa859e1cd2f5117fb3b5444f3d27c38ec5908c0f0312e2a0bc69dff087751f97b3921b5bde4f9ed
   languageName: node
   linkType: hard
-
-"semaphore-protocol@workspace:.":
-  version: 0.0.0-use.local
-  resolution: "semaphore-protocol@workspace:."
-  dependencies:
-    "@babel/core": ^7.16.7
-    "@babel/preset-env": ^7.16.8
-    "@babel/preset-typescript": ^7.17.12
-    "@commitlint/cli": ^16.0.2
-    "@commitlint/config-conventional": ^16.0.0
-    "@rollup/plugin-typescript": ^8.3.0
-    "@types/download": ^8.0.1
-    "@types/glob": ^7.2.0
-    "@types/node": ^17.0.9
-    "@types/rimraf": ^3.0.2
-    "@typescript-eslint/eslint-plugin": ^5.9.1
-    "@typescript-eslint/parser": ^5.9.1
-    "@vitest/coverage-v8": ^0.34.2
-    changelogithub: 0.12.7
-    commitizen: ^4.2.4
-    cz-conventional-changelog: ^3.3.0
-    dotenv: ^16.0.2
-    eslint: ^8.2.0
-    eslint-config-airbnb-base: 15.0.0
-    eslint-config-airbnb-typescript: ^16.1.0
-    eslint-config-prettier: ^8.3.0
-    eslint-plugin-import: ^2.25.2
-    husky: ^8.0.3
-    lint-staged: ^12.1.7
-    prettier: ^2.5.1
-    rimraf: ^5.0.1
-    rollup: ^2.64.0
-    ts-node: ^10.4.0
-    tslib: ^2.3.1
-    typescript: ^4.7.0
-    vitest: ^0.34.2
-  languageName: unknown
-  linkType: soft
 
 "semver@npm:2 || 3 || 4 || 5, semver@npm:^5.5.0, semver@npm:^5.6.0":
   version: 5.7.2

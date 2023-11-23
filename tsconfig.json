@@ -15,7 +15,8 @@
         "typeRoots": ["node_modules/@types", "types"],
         "types": ["vitest/globals"],
         "paths": {
-            "@semaphore-protocol/*": ["packages/*/src"]
+            "@semaphore-protocol/*": ["packages/*/src"],
+            "@semaphore-noir/*": ["packages/proof/src"]
         }
     },
     "ts-node": {
