@@ -25,7 +25,8 @@ export default {
     plugins: [
         typescript({
             tsconfig: "./build.tsconfig.json",
-            useTsconfigDeclarationDir: true
+            useTsconfigDeclarationDir: true,
+            check: false
         }),
         commonjs(),
         nodeResolve(),

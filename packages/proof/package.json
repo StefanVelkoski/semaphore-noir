@@ -1,5 +1,5 @@
 {
-    "name": "@semaphore-noir/proof",
+    "name": "@semaphore-protocol/proof",
     "version": "0.0.1",
     "description": "A library to generate and verify Semaphore proofs with Aztec's noir.",
     "license": "MIT",
@@ -24,6 +24,9 @@
         "prepublishOnly": "yarn build",
         "docs": "typedoc src/index.ts --out ../../docs/proof"
     },
+    "installConfig": {
+        "hoistingLimits": "workspaces"
+    },
     "publishConfig": {
         "access": "public"
     },
@@ -38,10 +41,6 @@
         "typedoc": "^0.22.11",
         "vitest": "^0.34.2"
     },
-    "peerDependencies": {
-        "@semaphore-protocol/group": "3.11.0",
-        "@semaphore-protocol/identity": "3.11.0"
-    },
     "dependencies": {
         "@aztec/bb.js": "^0.8.14",
         "@ethersproject/bignumber": "^5.5.0",
@@ -51,6 +50,8 @@
         "@noir-lang/backend_barretenberg": "0.18.0",
         "@noir-lang/noir_js": "0.18.0",
         "@noir-lang/types": "0.18.0",
+        "@semaphore-protocol/group": "3.11.0",
+        "@semaphore-protocol/identity": "3.11.0",
         "@signorecello/backend_barretenberg": "^0.19.6",
         "@zk-kit/incremental-merkle-tree": "0.4.3",
         "rimraf": "^5.0.1",
