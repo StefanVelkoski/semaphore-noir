@@ -2,7 +2,7 @@
     <h1 align="center">
         Semaphore proof
     </h1>
-    <p align="center">A library to generate and verify Semaphore proofs.</p>
+    <p align="center">A library to generate and verify Semaphore proofs using <a href="https://noir-lang.org/">Noir</a>.</p>
 </p>
 
 <p align="center">
@@ -29,29 +29,6 @@
     </a>
 </p>
 
-<div align="center">
-    <h4>
-        <a href="https://github.com/semaphore-protocol/semaphore/blob/main/CONTRIBUTING.md">
-            👥 Contributing
-        </a>
-        <span>&nbsp;&nbsp;|&nbsp;&nbsp;</span>
-        <a href="https://github.com/semaphore-protocol/semaphore/blob/main/CODE_OF_CONDUCT.md">
-            🤝 Code of conduct
-        </a>
-        <span>&nbsp;&nbsp;|&nbsp;&nbsp;</span>
-        <a href="https://github.com/semaphore-protocol/semaphore/contribute">
-            🔎 Issues
-        </a>
-        <span>&nbsp;&nbsp;|&nbsp;&nbsp;</span>
-        <a href="https://semaphore.appliedzkp.org/discord">
-            🗣️ Chat &amp; Support
-        </a>
-    </h4>
-</div>
-
-| This library provides utility functions to generate and verify Semaphore proofs compatible with the Semaphore [circuits](https://github.com/semaphore-protocol/semaphore/tree/main/circuits). Generating valid zero-knowledge proofs requires files that can only be obtained in an attested [trusted-setup ceremony](https://storage.googleapis.com/trustedsetup-a86f4.appspot.com/semaphore/semaphore_top_index.html). For a complete list of ready-to-use files visit [trusted-setup-pse.org](http://www.trusted-setup-pse.org/). |
-| ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-
 ## 🛠 Install
 
 ### npm or yarn
@@ -74,8 +51,7 @@ yarn add @semaphore-protocol/identity @semaphore-protocol/group @semaphore-noir/
 identity: _Identity_,
 group: _Group_ | _MerkleProof_,
 externalNullifier: _BytesLike | Hexable | number | bigint_,
-signal: _BytesLike | Hexable | number | bigint_,
-snarkArtifacts?: _SnarkArtifacts_
+signal: _BytesLike | Hexable | number | bigint_
 ): Promise\<_SemaphoreFullProof_>
 
 ```typescript
@@ -84,20 +60,15 @@ import { Group } from "@semaphore-protocol/group"
 import { generateProof } from "@semaphore-noir/proof"
 import { utils } from "ethers"
 
-const identity = new Identity()
-const group = new Group()
 const externalNullifier = utils.formatBytes32String("Topic")
 const signal = utils.formatBytes32String("Hello world")
 
-group.addMembers([...identityCommitments, identity.generateCommitment()])
+const group = new Group(1, 16) // group Id and treeDepth
+const identity = new Identity("your-message") // create and reproduce the identity with a String message
 
-const fullProof = await generateProof(identity, group, externalNullifier, signal, {
-    zkeyFilePath: "./semaphore.zkey",
-    wasmFilePath: "./semaphore.wasm"
-})
+group.addMember(identity.getCommitment())
 
-// You can also use the default zkey/wasm files (it only works from browsers!).
-// const fullProof = await generateProof(identity, group, externalNullifier, signal)
+const fullProof = await generateProof(identity, group, externalNullifier, signal)
 ```
 
 \# **verifyProof**(fullProof: _FullProof_, treeDepth: _number_): Promise\<_boolean_>
@@ -105,7 +76,7 @@ const fullProof = await generateProof(identity, group, externalNullifier, signal
 ```typescript
 import { verifyProof } from "@semaphore-noir/proof"
 
-await verifyProof(fullProof, 20)
+await verifyProof(fullProof, 20) // fullProof and treeDepth
 ```
 
 \# **calculateNullifierHash**(
