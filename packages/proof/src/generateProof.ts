@@ -5,7 +5,7 @@ import { MerkleProof } from "@zk-kit/incremental-merkle-tree"
 import { FullProof, SnarkArtifacts } from "./types"
 import { poseidon2 } from 'poseidon-lite'
 import { Barretenberg, Fr } from '@aztec/bb.js';
-import { BarretenbergBackend } from '@signorecello/backend_barretenberg';
+import { BarretenbergBackend } from '@noir-lang/backend_barretenberg';
 import { Noir }  from '@noir-lang/noir_js';
 import { CompiledCircuit, ProofData } from "@noir-lang/types"
 import { Group } from "@semaphore-protocol/group"

@@ -1,4 +1,4 @@
-import { BarretenbergBackend } from '@signorecello/backend_barretenberg';
+import { BarretenbergBackend } from '@noir-lang/backend_barretenberg';
 import { Noir } from '@noir-lang/noir_js';
 import { CompiledCircuit, ProofData } from "@noir-lang/types"
 import { FullProof } from "./types"
