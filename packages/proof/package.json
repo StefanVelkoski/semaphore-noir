@@ -1,6 +1,6 @@
 {
     "name": "@semaphore-noir/proof",
-    "version": "0.0.1",
+    "version": "0.0.3",
     "description": "A library to generate and verify Semaphore proofs with Aztec's noir.",
     "license": "MIT",
     "main": "dist/index.node.js",

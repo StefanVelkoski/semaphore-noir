@@ -69,10 +69,6 @@ export default async function generateProof(
     };
 
     const proof = await noir.generateFinalProof(abi)
-    const verified = await noir.verifyFinalProof(proof);
-
-    //should return true
-    console.log('verified', verified)
 
     return {
         merkleTreeRoot: merkleProof.root,
