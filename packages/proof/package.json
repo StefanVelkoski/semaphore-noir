@@ -6,9 +6,11 @@
     "main": "dist/index.node.js",
     "exports": {
         "import": "./dist/index.mjs",
-        "require": "./dist/index.node.js"
+        "require": "./dist/index.node.js",
+        "types": "dist/types/src/index.d.ts"
+
     },
-    "types": "dist/types/index.d.ts",
+    "types": "dist/types/src/index.d.ts",
     "files": [
         "dist/",
         "src/",
@@ -47,9 +49,9 @@
         "@ethersproject/bytes": "^5.7.0",
         "@ethersproject/keccak256": "^5.7.0",
         "@ethersproject/strings": "^5.5.0",
-        "@noir-lang/backend_barretenberg": "0.19.3",
-        "@noir-lang/noir_js": "0.19.3",
-        "@noir-lang/types": "0.19.3",
+        "@noir-lang/backend_barretenberg": "0.21.0",
+        "@noir-lang/noir_js": "0.21.0",
+        "@noir-lang/types": "0.21.0",
         "@semaphore-protocol/group": "3.11.0",
         "@semaphore-protocol/identity": "3.11.0",
         "@zk-kit/incremental-merkle-tree": "0.4.3",
